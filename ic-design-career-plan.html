@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字IC设计工程师职业发展方案 | 个人主页</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS 滚动动画库 -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <!-- Font Awesome 图标 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Google Fonts 中文字体 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans SC', 'Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            primary: { 50:'#f0f9ff', 100:'#e0f2fe', 200:'#bae6fd', 300:'#7dd3fc', 400:'#38bdf8', 500:'#0ea5e9', 600:'#0284c7', 700:'#0369a1' },
+            accent: { 50:'#fdf4ff', 100:'#fae8ff', 200:'#f5d0fe', 300:'#f0abfc', 400:'#e879f9', 500:'#d946ef', 600:'#c026d3' },
+            dark: { 800:'#1e293b', 900:'#0f172a', 950:'#020617' }
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            float: { '0%, 100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-20px)' } },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+    /* 渐变文字 */
+    .text-gradient {
+      background: linear-gradient(135deg, #0ea5e9, #d946ef);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    /* 毛玻璃导航栏 */
+    .glass-nav {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* 卡片悬停发光效果 */
+    .card-glow {
+      transition: all 0.3s ease;
+    }
+    .card-glow:hover {
+      box-shadow: 0 0 30px rgba(14, 165, 233, 0.2), 0 0 60px rgba(217, 70, 239, 0.1);
+      transform: translateY(-4px);
+    }
+
+    /* 代码样式 */
+    pre {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+    code {
+      background: #1e293b;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+    .markdown-content h1 { font-size: 2rem; font-weight: bold; margin-top: 2rem; margin-bottom: 1rem; }
+    .markdown-content h2 { font-size: 1.5rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+    .markdown-content h3 { font-size: 1.25rem; font-weight: bold; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+    .markdown-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+    .markdown-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
+    .markdown-content li { margin-bottom: 0.25rem; }
+    .markdown-content table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
+    .markdown-content th, .markdown-content td { border: 1px solid #334155; padding: 0.5rem; text-align: left; }
+    .markdown-content th { background-color: #1e293b; }
+    .markdown-content a { color: #38bdf8; text-decoration: underline; }
+    .markdown-content a:hover { color: #0ea5e9; }
+  </style>
+</head>
+
+<body class="bg-dark-950 text-gray-200 font-sans overflow-x-hidden">
+
+  <!-- ========== 导航栏 ========== -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-white/5 transition-all duration-300">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <!-- Logo / 姓名 -->
+      <a href="index.html" class="text-xl font-bold tracking-wide">
+        <span class="text-gradient">个人主页</span>
+      </a>
+
+      <!-- 桌面端菜单 -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="index.html#about" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">关于</a>
+        <a href="index.html#experience" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">经历</a>
+        <a href="index.html#skills" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">技能</a>
+        <a href="index.html#projects" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">项目</a>
+        <a href="index.html#contact" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">联系</a>
+        <a href="ic-design-career-plan.html" class="text-sm text-primary-400 font-medium transition-colors">IC设计学习方案</a>
+      </div>
+
+      <!-- 移动端汉堡菜单按钮 -->
+      <button id="menu-toggle" class="md:hidden text-gray-300 hover:text-white">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+
+    <!-- 移动端下拉菜单 -->
+    <div id="mobile-menu" class="hidden md:hidden bg-dark-900/95 backdrop-blur-md border-t border-white/5 px-6 py-4">
+      <div class="flex flex-col gap-4">
+        <a href="index.html#about" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">关于</a>
+        <a href="index.html#experience" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">经历</a>
+        <a href="index.html#skills" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">技能</a>
+        <a href="index.html#projects" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">项目</a>
+        <a href="index.html#contact" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">联系</a>
+        <a href="ic-design-career-plan.html" class="text-primary-400 font-medium mobile-link">IC设计学习方案</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== 页面内容 ========== -->
+  <main class="pt-24 pb-16 px-6">
+    <div class="max-w-6xl mx-auto">
+
+      <!-- 页面标题 -->
+      <div class="text-center mb-12" data-aos="fade-up">
+        <span class="text-sm font-medium text-primary-400 tracking-widest uppercase">LEARNING PATH</span>
+        <h1 class="text-3xl md:text-5xl font-bold mt-2 text-white">数字IC设计工程师职业发展方案</h1>
+        <div class="w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto mt-6 rounded-full"></div>
+        <p class="text-gray-400 mt-6 max-w-3xl mx-auto leading-relaxed">
+          本方案专为计划于2026年9月入读香港大学集成电路学院的数字IC设计工程师设计。目标是通过系统性学习和实践，在毕业时获得高薪且工作舒适的职位。
+        </p>
+      </div>
+
+      <!-- 快速导航 -->
+      <div class="mb-12" data-aos="fade-up" data-aos-delay="100">
+        <div class="rounded-2xl bg-dark-800/50 border border-white/5 p-6 card-glow">
+          <h2 class="text-xl font-semibold mb-4 text-white flex items-center gap-2">
+            <i class="fas fa-map text-primary-400"></i> 快速导航
+          </h2>
+          <div class="flex flex-wrap gap-3">
+            <a href="#overview" class="px-4 py-2 rounded-full bg-primary-500/10 text-primary-300 border border-primary-500/20 hover:bg-primary-500/20 transition-colors">方案概述</a>
+            <a href="#files" class="px-4 py-2 rounded-full bg-accent-500/10 text-accent-300 border border-accent-500/20 hover:bg-accent-500/20 transition-colors">文件下载</a>
+            <a href="#timeline" class="px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors">时间规划</a>
+            <a href="#projects" class="px-4 py-2 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 hover:bg-amber-500/20 transition-colors">推荐项目</a>
+            <a href="#github" class="px-4 py-2 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 hover:bg-purple-500/20 transition-colors">GitHub资源</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 方案概述 -->
+      <section id="overview" class="mb-16" data-aos="fade-up" data-aos-delay="200">
+        <div class="rounded-2xl bg-dark-800/50 border border-white/5 p-8 card-glow">
+          <h2 class="text-2xl font-bold mb-6 text-white flex items-center gap-3">
+            <i class="fas fa-book-open text-primary-400"></i> 方案概述
+          </h2>
+
+          <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div>
+              <h3 class="text-lg font-semibold mb-4 text-primary-300">目标</h3>
+              <ul class="space-y-3">
+                <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-400 mt-1"></i> <span>在入学前打下坚实的技术基础</span></li>
+                <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-400 mt-1"></i> <span>掌握SystemVerilog和UVM验证方法学</span></li>
+                <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-400 mt-1"></i> <span>通过实际项目积累经验，构建作品集</span></li>
+                <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-400 mt-1"></i> <span>毕业时获得高薪且工作舒适的职位</span></li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-4 text-accent-300">时间范围</h3>
+              <ul class="space-y-3">
+                <li class="flex items-start gap-2"><i class="far fa-calendar text-accent-400 mt-1"></i> <span><strong>入学前准备</strong>：2026年4月-8月（5个月）</span></li>
+                <li class="flex items-start gap-2"><i class="far fa-calendar text-accent-400 mt-1"></i> <span><strong>课程期间</strong>：2026年9月-2027年5月（9个月）</span></li>
+                <li class="flex items-start gap-2"><i class="far fa-calendar text-accent-400 mt-1"></i> <span><strong>暑期实习</strong>：2027年6月-8月（3个月）</span></li>
+                <li class="flex items-start gap-2"><i class="far fa-calendar text-accent-400 mt-1"></i> <span><strong>求职冲刺</strong>：2027年9月-12月（4个月）</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-dark-900/50 rounded-xl p-6 border border-white/5">
+            <h3 class="text-lg font-semibold mb-4 text-white">核心技能矩阵</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-dark-800">
+                    <th class="py-3 px-4 text-left">技能类别</th>
+                    <th class="py-3 px-4 text-left">具体技能</th>
+                    <th class="py-3 px-4 text-left">掌握目标</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                  <tr>
+                    <td class="py-3 px-4"><span class="text-primary-300">硬件描述语言</span></td>
+                    <td class="py-3 px-4">SystemVerilog（设计+验证）、VHDL</td>
+                    <td class="py-3 px-4"><span class="px-2 py-1 text-xs rounded-full bg-primary-500/20 text-primary-300">精通</span></td>
+                  </tr>
+                  <tr>
+                    <td class="py-3 px-4"><span class="text-accent-300">验证方法学</span></td>
+                    <td class="py-3 px-4">UVM、形式验证、断言验证</td>
+                    <td class="py-3 px-4"><span class="px-2 py-1 text-xs rounded-full bg-accent-500/20 text-accent-300">熟练</span></td>
+                  </tr>
+                  <tr>
+                    <td class="py-3 px-4"><span class="text-emerald-300">脚本语言</span></td>
+                    <td class="py-3 px-4">Python（自动化）、Tcl（EDA工具）、Perl/Shell</td>
+                    <td class="py-3 px-4"><span class="px-2 py-1 text-xs rounded-full bg-emerald-500/20 text-emerald-300">熟练</span></td>
+                  </tr>
+                  <tr>
+                    <td class="py-3 px-4"><span class="text-amber-300">设计知识</span></td>
+                    <td class="py-3 px-4">低功耗设计、时序分析、CDC、DFT</td>
+                    <td class="py-3 px-4"><span class="px-2 py-1 text-xs rounded-full bg-amber-500/20 text-amber-300">掌握原理</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 文件下载 -->
+      <section id="files" class="mb-16" data-aos="fade-up" data-aos-delay="300">
+        <div class="rounded-2xl bg-dark-800/50 border border-white/5 p-8 card-glow">
+          <h2 class="text-2xl font-bold mb-6 text-white flex items-center gap-3">
+            <i class="fas fa-download text-accent-400"></i> 完整方案文件下载
+          </h2>
+          <p class="text-gray-400 mb-8">以下文件包含完整的规划细节，建议下载后仔细阅读。</p>
+
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 文件1 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-primary-500/30 transition-colors">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-400 text-xl">
+                  <i class="fas fa-map"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">总体规划</h3>
+                  <p class="text-xs text-gray-500">核心文档</p>
+                </div>
+              </div>
+              <p class="text-sm text-gray-400 mb-4">完整的发展路线图，涵盖行业分析、技能矩阵、学习路线、求职策略等。</p>
+              <a href="files/数字IC设计工程师职业发展总体规划.md" download class="inline-flex items-center gap-2 text-primary-400 hover:text-primary-300 transition-colors">
+                <i class="fas fa-download"></i> 下载 Markdown 文件
+              </a>
+            </div>
+
+            <!-- 文件2 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-accent-500/30 transition-colors">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-accent-500/10 flex items-center justify-center text-accent-400 text-xl">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">月度计划表</h3>
+                  <p class="text-xs text-gray-500">执行指南</p>
+                </div>
+              </div>
+              <p class="text-sm text-gray-400 mb-4">详细的月度、周度学习计划，包含具体任务、资源和时间估算（2026年4月-8月）。</p>
+              <a href="files/月度学习计划表（2026年4月-8月）.md" download class="inline-flex items-center gap-2 text-accent-400 hover:text-accent-300 transition-colors">
+                <i class="fas fa-download"></i> 下载 Markdown 文件
+              </a>
+            </div>
+
+            <!-- 文件3 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-emerald-500/30 transition-colors">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xl">
+                  <i class="fas fa-project-diagram"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">项目清单</h3>
+                  <p class="text-xs text-gray-500">实践指南</p>
+                </div>
+              </div>
+              <p class="text-sm text-gray-400 mb-4">6个渐进式项目，从简单ALU到完整SoC，包含详细规格和验证要求。</p>
+              <a href="files/推荐项目清单与规格.md" download class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors">
+                <i class="fas fa-download"></i> 下载 Markdown 文件
+              </a>
+            </div>
+
+            <!-- 文件4 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-amber-500/30 transition-colors">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 text-xl">
+                  <i class="fas fa-tools"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">资源工具列表</h3>
+                  <p class="text-xs text-gray-500">学习资源</p>
+                </div>
+              </div>
+              <p class="text-sm text-gray-400 mb-4">书籍、课程、工具、社区等全面资源汇总，支持学习计划执行。</p>
+              <a href="files/学习资源与工具列表.md" download class="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors">
+                <i class="fas fa-download"></i> 下载 Markdown 文件
+              </a>
+            </div>
+
+            <!-- 文件5 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-purple-500/30 transition-colors">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-xl">
+                  <i class="fas fa-file-alt"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">README</h3>
+                  <p class="text-xs text-gray-500">入门指南</p>
+                </div>
+              </div>
+              <p class="text-sm text-gray-400 mb-4">全套方案索引和快速开始指南，帮助您快速了解和使用本方案。</p>
+              <a href="files/README.md" download class="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors">
+                <i class="fas fa-download"></i> 下载 Markdown 文件
+              </a>
+            </div>
+
+            <!-- 文件6 - 所有文件打包 -->
+            <div class="rounded-xl bg-gradient-to-br from-primary-500/10 to-accent-500/10 border border-primary-500/20 p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-xl">
+                  <i class="fas fa-box"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">完整打包</h3>
+                  <p class="text-xs text-gray-300">所有文件</p>
+                </div>
+              </div>
+              <p class="text-sm text-gray-300 mb-4">下载所有5个文件的压缩包，包含完整的数字IC设计职业发展方案。</p>
+              <button onclick="downloadAllFiles()" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary-500 to-accent-500 text-white font-medium hover:opacity-90 transition-opacity">
+                <i class="fas fa-file-archive"></i> 下载所有文件 (ZIP)
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 时间规划 -->
+      <section id="timeline" class="mb-16" data-aos="fade-up" data-aos-delay="400">
+        <div class="rounded-2xl bg-dark-800/50 border border-white/5 p-8 card-glow">
+          <h2 class="text-2xl font-bold mb-8 text-white flex items-center gap-3">
+            <i class="fas fa-hourglass-half text-amber-400"></i> 关键时间节点规划
+          </h2>
+
+          <div class="relative">
+            <!-- 时间线 -->
+            <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-transparent via-primary-500 to-transparent z-0"></div>
+
+            <!-- 时间节点1 -->
+            <div class="relative flex flex-col md:flex-row items-center mb-12">
+              <div class="w-full md:w-1/2 md:pr-12 md:text-right pl-8 md:pl-0" data-aos="fade-right">
+                <div class="rounded-xl bg-dark-900/70 border border-primary-500/30 p-6 inline-block">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="px-3 py-1 text-xs rounded-full bg-primary-500/20 text-primary-300 font-medium">2026年4月-8月</span>
+                  </div>
+                  <h3 class="text-lg font-semibold text-white mb-2">入学前准备阶段</h3>
+                  <p class="text-sm text-gray-400">掌握SystemVerilog和UVM，完成3-5个实践项目，建立GitHub作品集。</p>
+                  <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="px-2 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300">SystemVerilog</span>
+                    <span class="px-2 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300">UVM验证</span>
+                    <span class="px-2 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300">项目实践</span>
+                  </div>
+                </div>
+              </div>
+              <div class="absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-primary-500 hidden md:flex items-center justify-center ring-4 ring-dark-950 z-10">
+                <div class="w-2 h-2 rounded-full bg-white"></div>
+              </div>
+              <div class="hidden md:block w-1/2 md:pl-12"></div>
+            </div>
+
+            <!-- 时间节点2 -->
+            <div class="relative flex flex-col md:flex-row items-center mb-12">
+              <div class="hidden md:block w-1/2 md:pr-12"></div>
+              <div class="absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-accent-500 hidden md:flex items-center justify-center ring-4 ring-dark-950 z-10">
+                <div class="w-2 h-2 rounded-full bg-white"></div>
+              </div>
+              <div class="w-full md:w-1/2 md:pl-12 pl-8" data-aos="fade-left">
+                <div class="rounded-xl bg-dark-900/70 border border-accent-500/30 p-6">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="px-3 py-1 text-xs rounded-full bg-accent-500/20 text-accent-300 font-medium">2026年9月-2027年5月</span>
+                  </div>
+                  <h3 class="text-lg font-semibold text-white mb-2">香港大学课程期间</h3>
+                  <p class="text-sm text-gray-400">结合课程深入学习，参与实际项目，积累项目经验，准备暑期实习申请。</p>
+                  <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="px-2 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300">课程学习</span>
+                    <span class="px-2 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300">工具实操</span>
+                    <span class="px-2 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300">实习准备</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 时间节点3 -->
+            <div class="relative flex flex-col md:flex-row items-center mb-12">
+              <div class="w-full md:w-1/2 md:pr-12 md:text-right pl-8 md:pl-0" data-aos="fade-right">
+                <div class="rounded-xl bg-dark-900/70 border border-emerald-500/30 p-6 inline-block">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="px-3 py-1 text-xs rounded-full bg-emerald-500/20 text-emerald-300 font-medium">2027年6月-8月</span>
+                  </div>
+                  <h3 class="text-lg font-semibold text-white mb-2">暑期实习</h3>
+                  <p class="text-sm text-gray-400">获得行业经验，建立人脉，争取return offer，为全职工作打下基础。</p>
+                  <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="px-2 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300">行业经验</span>
+                    <span class="px-2 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300">人脉建立</span>
+                    <span class="px-2 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300">Return Offer</span>
+                  </div>
+                </div>
+              </div>
+              <div class="absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-emerald-500 hidden md:flex items-center justify-center ring-4 ring-dark-950 z-10">
+                <div class="w-2 h-2 rounded-full bg-white"></div>
+              </div>
+              <div class="hidden md:block w-1/2 md:pl-12"></div>
+            </div>
+
+            <!-- 时间节点4 -->
+            <div class="relative flex flex-col md:flex-row items-center">
+              <div class="hidden md:block w-1/2 md:pr-12"></div>
+              <div class="absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-amber-500 hidden md:flex items-center justify-center ring-4 ring-dark-950 z-10">
+                <div class="w-2 h-2 rounded-full bg-white"></div>
+              </div>
+              <div class="w-full md:w-1/2 md:pl-12 pl-8" data-aos="fade-left">
+                <div class="rounded-xl bg-dark-900/70 border border-amber-500/30 p-6">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="px-3 py-1 text-xs rounded-full bg-amber-500/20 text-amber-300 font-medium">2027年9月-12月</span>
+                  </div>
+                  <h3 class="text-lg font-semibold text-white mb-2">求职冲刺与入职</h3>
+                  <p class="text-sm text-gray-400">获得多个offer，选择最优岗位，谈判薪资，准备入职，开始职业生涯。</p>
+                  <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="px-2 py-1 text-xs rounded-full bg-amber-500/10 text-amber-300">面试准备</span>
+                    <span class="px-2 py-1 text-xs rounded-full bg-amber-500/10 text-amber-300">薪资谈判</span>
+                    <span class="px-2 py-1 text-xs rounded-full bg-amber-500/10 text-amber-300">入职准备</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 推荐项目 -->
+      <section id="projects" class="mb-16" data-aos="fade-up" data-aos-delay="500">
+        <div class="rounded-2xl bg-dark-800/50 border border-white/5 p-8 card-glow">
+          <h2 class="text-2xl font-bold mb-8 text-white flex items-center gap-3">
+            <i class="fas fa-tasks text-emerald-400"></i> 推荐实践项目
+          </h2>
+
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 项目1 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-primary-500/30 transition-colors">
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 text-xs rounded-full bg-primary-500/20 text-primary-300 font-medium">难度: ★☆☆☆☆</span>
+                <span class="text-xs text-gray-500">1周</span>
+              </div>
+              <h3 class="text-lg font-semibold text-white mb-3">ALU（算术逻辑单元）</h3>
+              <p class="text-sm text-gray-400 mb-4">8位ALU设计，支持加、减、与、或等操作，生成标志位。</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300">SystemVerilog</span>
+                <span class="px-2 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300">基础testbench</span>
+              </div>
+              <a href="files/推荐项目清单与规格.md" class="text-primary-400 hover:text-primary-300 text-sm font-medium flex items-center gap-1">
+                查看详细规格 <i class="fas fa-arrow-right text-xs"></i>
+              </a>
+            </div>
+
+            <!-- 项目2 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-accent-500/30 transition-colors">
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 text-xs rounded-full bg-accent-500/20 text-accent-300 font-medium">难度: ★★☆☆☆</span>
+                <span class="text-xs text-gray-500">2周</span>
+              </div>
+              <h3 class="text-lg font-semibold text-white mb-3">同步FIFO</h3>
+              <p class="text-sm text-gray-400 mb-4">深度8/16，宽度16/32位，完整UVM验证环境，功能覆盖率收集。</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300">UVM验证</span>
+                <span class="px-2 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300">覆盖率</span>
+              </div>
+              <a href="files/推荐项目清单与规格.md" class="text-accent-400 hover:text-accent-300 text-sm font-medium flex items-center gap-1">
+                查看详细规格 <i class="fas fa-arrow-right text-xs"></i>
+              </a>
+            </div>
+
+            <!-- 项目3 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-emerald-500/30 transition-colors">
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 text-xs rounded-full bg-emerald-500/20 text-emerald-300 font-medium">难度: ★★★☆☆</span>
+                <span class="text-xs text-gray-500">2-3周</span>
+              </div>
+              <h3 class="text-lg font-semibold text-white mb-3">UART控制器</h3>
+              <p class="text-sm text-gray-400 mb-4">RS-232兼容，可配置波特率，APB/AXI接口，完整UVM验证环境。</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300">协议设计</span>
+                <span class="px-2 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300">寄存器模型</span>
+              </div>
+              <a href="files/推荐项目清单与规格.md" class="text-emerald-400 hover:text-emerald-300 text-sm font-medium flex items-center gap-1">
+                查看详细规格 <i class="fas fa-arrow-right text-xs"></i>
+              </a>
+            </div>
+
+            <!-- 项目4 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-amber-500/30 transition-colors">
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 text-xs rounded-full bg-amber-500/20 text-amber-300 font-medium">难度: ★★★☆☆</span>
+                <span class="text-xs text-gray-500">2周</span>
+              </div>
+              <h3 class="text-lg font-semibold text-white mb-3">低功耗睡眠控制器</h3>
+              <p class="text-sm text-gray-400 mb-4">多电压域设计，UPF电源管理，电源门控，隔离控制。</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 text-xs rounded-full bg-amber-500/10 text-amber-300">低功耗设计</span>
+                <span class="px-2 py-1 text-xs rounded-full bg-amber-500/10 text-amber-300">UPF</span>
+              </div>
+              <a href="files/推荐项目清单与规格.md" class="text-amber-400 hover:text-amber-300 text-sm font-medium flex items-center gap-1">
+                查看详细规格 <i class="fas fa-arrow-right text-xs"></i>
+              </a>
+            </div>
+
+            <!-- 项目5 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-purple-500/30 transition-colors">
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 text-xs rounded-full bg-purple-500/20 text-purple-300 font-medium">难度: ★★★★☆</span>
+                <span class="text-xs text-gray-500">3周</span>
+              </div>
+              <h3 class="text-lg font-semibold text-white mb-3">AXI-lite to APB Bridge</h3>
+              <p class="text-sm text-gray-400 mb-4">协议转换桥接器，完整UVM验证环境，AXI/APB协议转换。</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 text-xs rounded-full bg-purple-500/10 text-purple-300">AXI协议</span>
+                <span class="px-2 py-1 text-xs rounded-full bg-purple-500/10 text-purple-300">协议转换</span>
+              </div>
+              <a href="files/推荐项目清单与规格.md" class="text-purple-400 hover:text-purple-300 text-sm font-medium flex items-center gap-1">
+                查看详细规格 <i class="fas fa-arrow-right text-xs"></i>
+              </a>
+            </div>
+
+            <!-- 项目6 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6 hover:border-pink-500/30 transition-colors">
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 text-xs rounded-full bg-pink-500/20 text-pink-300 font-medium">难度: ★★★★★</span>
+                <span class="text-xs text-gray-500">4-6周</span>
+              </div>
+              <h3 class="text-lg font-semibold text-white mb-3">小型RISC-V SoC</h3>
+              <p class="text-sm text-gray-400 mb-4">RV32IMC CPU核心，AXI-lite总线，UART/定时器/GPIO外设，系统级验证。</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 text-xs rounded-full bg-pink-500/10 text-pink-300">RISC-V</span>
+                <span class="px-2 py-1 text-xs rounded-full bg-pink-500/10 text-pink-300">SoC设计</span>
+              </div>
+              <a href="files/推荐项目清单与规格.md" class="text-pink-400 hover:text-pink-300 text-sm font-medium flex items-center gap-1">
+                查看详细规格 <i class="fas fa-arrow-right text-xs"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GitHub资源推荐 -->
+      <section id="github" class="mb-16" data-aos="fade-up" data-aos-delay="600">
+        <div class="rounded-2xl bg-dark-800/50 border border-white/5 p-8 card-glow">
+          <h2 class="text-2xl font-bold mb-8 text-white flex items-center gap-3">
+            <i class="fab fa-github text-purple-400"></i> 推荐GitHub项目与资源
+          </h2>
+
+          <p class="text-gray-400 mb-8">以下开源项目是学习数字IC设计的优秀资源，建议fork并研究其代码实现。</p>
+
+          <div class="space-y-6">
+            <!-- RISC-V相关 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500/80 flex items-center justify-center text-white text-xl">
+                  <i class="fas fa-microchip"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">RISC-V CPU实现</h3>
+                  <p class="text-sm text-gray-500">开源RISC-V处理器项目</p>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-star text-amber-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/openhwgroup/cv32e40p" target="_blank" class="text-white hover:text-primary-300 font-medium">cv32e40p</a>
+                    <p class="text-sm text-gray-400">OpenHW Group的32位RISC-V CPU核心，工业级质量，支持RV32IMC。</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-star text-amber-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/ultraembedded/riscv" target="_blank" class="text-white hover:text-primary-300 font-medium">ultraembedded/riscv</a>
+                    <p class="text-sm text-gray-400">小型RISC-V CPU实现，代码简洁，适合学习CPU微架构。</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-star text-amber-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/cliffordwolf/picorv32" target="_blank" class="text-white hover:text-primary-300 font-medium">picorv32</a>
+                    <p class="text-sm text-gray-400">小型RISC-V CPU，尺寸小但功能完整，Verilog实现。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- UVM/验证相关 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500/80 flex items-center justify-center text-white text-xl">
+                  <i class="fas fa-vial"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">UVM验证示例</h3>
+                  <p class="text-sm text-gray-500">验证方法学学习资源</p>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-code text-cyan-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/learnuvm/uvm_tutorial" target="_blank" class="text-white hover:text-primary-300 font-medium">uvm_tutorial</a>
+                    <p class="text-sm text-gray-400">UVM教程代码，包含逐步学习的示例，适合UVM入门。</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-code text-cyan-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/verificationacademy/uvm" target="_blank" class="text-white hover:text-primary-300 font-medium">verificationacademy/uvm</a>
+                    <p class="text-sm text-gray-400">Verification Academy的UVM示例，行业标准实践。</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-code text-cyan-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/chiggs/uvm" target="_blank" class="text-white hover:text-primary-300 font-medium">chiggs/uvm</a>
+                    <p class="text-sm text-gray-400">UVM学习资源和示例代码，包含常见验证场景。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 开源工具 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500/80 flex items-center justify-center text-white text-xl">
+                  <i class="fas fa-tools"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">开源EDA工具</h3>
+                  <p class="text-sm text-gray-500">免费IC设计工具</p>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-wrench text-emerald-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/YosysHQ/yosys" target="_blank" class="text-white hover:text-primary-300 font-medium">Yosys</a>
+                    <p class="text-sm text-gray-400">开源综合工具，支持Verilog综合，可编程框架。</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-wrench text-emerald-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/verilator/verilator" target="_blank" class="text-white hover:text-primary-300 font-medium">Verilator</a>
+                    <p class="text-sm text-gray-400">高速SystemVerilog仿真器，将Verilog编译为C++。</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-wrench text-emerald-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/gtkwave/gtkwave" target="_blank" class="text-white hover:text-primary-300 font-medium">GTKWave</a>
+                    <p class="text-sm text-gray-400">开源波形查看器，支持VCD、FSDB等格式。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 学习资源 -->
+            <div class="rounded-xl bg-dark-900/50 border border-white/5 p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500/80 flex items-center justify-center text-white text-xl">
+                  <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">学习资源仓库</h3>
+                  <p class="text-sm text-gray-500">教程和资料合集</p>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-book text-purple-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/ashutosh1919/awesome-digital-design" target="_blank" class="text-white hover:text-primary-300 font-medium">awesome-digital-design</a>
+                    <p class="text-sm text-gray-400">数字设计资源大全，包含工具、教程、书籍、项目等。</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-book text-purple-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/verypossible/verilog-guide" target="_blank" class="text-white hover:text-primary-300 font-medium">verilog-guide</a>
+                    <p class="text-sm text-gray-400">Verilog学习指南，包含示例代码和最佳实践。</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-book text-purple-400 mt-1"></i>
+                  <div>
+                    <a href="https://github.com/lowRISC/opentitan" target="_blank" class="text-white hover:text-primary-300 font-medium">OpenTitan</a>
+                    <p class="text-sm text-gray-400">开源硬件安全芯片，包含完整SoC设计，工业级质量。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 p-6 rounded-xl bg-gradient-to-r from-primary-500/10 to-accent-500/10 border border-primary-500/20">
+            <div class="flex items-start gap-4">
+              <div class="flex-shrink-0">
+                <i class="fas fa-lightbulb text-2xl text-amber-400"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-white mb-2">如何使用这些资源</h3>
+                <p class="text-gray-300 mb-3">建议按以下步骤学习：</p>
+                <ol class="list-decimal pl-5 space-y-2 text-gray-300">
+                  <li><strong>Fork感兴趣的项目</strong>到自己的GitHub账户</li>
+                  <li><strong>阅读README和文档</strong>了解项目结构和设计思想</li>
+                  <li><strong>在本地环境中运行</strong>，确保能正常编译和仿真</li>
+                  <li><strong>修改和扩展功能</strong>，加深理解，添加到自己的作品集</li>
+                  <li><strong>提交Pull Request</strong>，参与开源社区贡献</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 行动号召 -->
+      <section data-aos="fade-up" data-aos-delay="700">
+        <div class="rounded-2xl bg-gradient-to-r from-primary-500/20 to-accent-500/20 border border-primary-500/30 p-8 text-center">
+          <h2 class="text-2xl font-bold mb-4 text-white">立即开始您的IC设计职业发展之旅</h2>
+          <p class="text-gray-300 mb-8 max-w-3xl mx-auto">下载完整方案文件，按照计划开始学习。坚持执行，您将在香港大学课程期间获得显著优势，并在毕业后获得理想的工作机会。</p>
+          <div class="flex flex-wrap gap-4 justify-center">
+            <a href="#files" class="group relative px-8 py-3 rounded-full font-medium bg-gradient-to-r from-primary-500 to-accent-500 text-white transition-all hover:shadow-lg hover:shadow-primary-500/25">
+              <span>下载方案文件</span>
+              <i class="fas fa-download ml-2 group-hover:translate-y-0.5 transition-transform inline-block"></i>
+            </a>
+            <a href="index.html#contact" class="px-8 py-3 rounded-full font-medium border border-white/10 text-gray-300 hover:border-primary-400 hover:text-white transition-all">
+              联系我获取建议
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========== 页脚 ========== -->
+  <footer class="border-t border-white/5 py-8 text-center">
+    <p class="text-sm text-gray-500">&copy; <span id="year"></span> 个人主页 · 使用 <span class="text-primary-400">&#9829;</span> 构建</p>
+  </footer>
+
+  <!-- ========== JavaScript ========== -->
+  <script>
+    // 初始化 AOS 动画
+    AOS.init({ duration: 600, once: true, offset: 50 });
+
+    // 动态年份
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // 移动端菜单
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (menuToggle && mobileMenu) {
+      menuToggle.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+      document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+    }
+
+    // 下载所有文件函数
+    function downloadAllFiles() {
+      window.location.href = 'files/ic-design-career-plan.zip';
+    }
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
