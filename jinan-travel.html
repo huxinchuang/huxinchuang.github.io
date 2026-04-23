@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>济南泉水探索之旅 - 旅游规划工具</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- 百度地图API -->
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=你的百度地图AK"></script>
+
+  <!-- Font Awesome 图标 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js">
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js">
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans SC', 'Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985'
+            },
+            spring: {
+              100: '#d4f1f9',
+              200: '#a8e3f3',
+              300: '#7dd5ed',
+              400: '#51c7e7',
+              500: '#26b9e1',
+              600: '#1e94b4',
+              700: '#176f87',
+              800: '#0f4a5a'
+            },
+            accent: {
+              50: '#fdf4ff',
+              100: '#fae8ff',
+              200: '#f5d0fe',
+              300: '#f0abfc',
+              400: '#e879f9',
+              500: '#d946ef',
+              600: '#c026d3'
+            },
+            dark: {
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617'
+            }
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'bounce-slow': 'bounce 3s infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-20px)' }
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.3); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(14, 165, 233, 0.5); }
+
+    /* 毛玻璃效果 */
+    .glass {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* 卡片发光效果 */
+    .card-glow {
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .card-glow:hover {
+      box-shadow: 0 8px 30px rgba(14, 165, 233, 0.15), 0 0 40px rgba(217, 70, 239, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* 地图容器 */
+    #map-container {
+      transition: all 0.3s ease;
+    }
+
+    /* 泉水波纹动画 */
+    @keyframes ripple {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    .ripple {
+      animation: ripple 2s infinite;
+    }
+  </style>
+</head>
+<body class="text-gray-200 font-sans h-full flex flex-col">
+  <!-- ===== 用户名弹窗 ===== -->
+  <div id="username-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="glass rounded-2xl p-8 w-full max-w-md mx-4 card-glow">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-spring-400 to-primary-500 flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-users text-white text-2xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-spring-300 to-primary-400 bg-clip-text text-transparent">
+          欢迎加入济南之旅
+        </h2>
+        <p class="text-gray-400 text-sm mt-2">输入昵称开始协作规划</p>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <input type="text" id="username-input"
+                 class="w-full bg-dark-800/50 border border-white/10 rounded-xl py-3 px-4 text-center text-lg focus:outline-none focus:border-spring-400/50 focus:ring-1 focus:ring-spring-400/30"
+                 placeholder="输入你的昵称" maxlength="12" autofocus>
+        </div>
+        <button id="username-confirm"
+                class="w-full py-3 rounded-xl bg-gradient-to-r from-spring-500 to-primary-500 text-white font-medium hover:shadow-lg hover:shadow-spring-500/25 transition-all">
+          <i class="fas fa-door-open mr-2"></i>加入规划
+        </button>
+        <p class="text-xs text-gray-500 text-center">数据将通过 Firebase 实时同步</p>
+      </div>
+    </div>
+  </div>
+  <!-- ===== 顶部导航栏 ===== -->
+  <header class="glass border-b border-white/10 py-4 px-6 z-10">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <!-- Logo -->
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-spring-400 to-primary-500 flex items-center justify-center">
+            <i class="fas fa-water text-white text-lg"></i>
+            <div class="absolute inset-0 rounded-full border-2 border-spring-300/30 ripple"></div>
+          </div>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-spring-300 to-primary-400 bg-clip-text text-transparent">
+            济南泉水探索之旅
+          </h1>
+          <p class="text-xs text-gray-400">小团体旅游规划工具</p>
+        </div>
+      </div>
+
+      <!-- 在线用户状态 -->
+      <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-xs text-emerald-300">在线协作</span>
+        <span id="online-users" class="text-xs text-emerald-400 font-medium">0人</span>
+      </div>
+
+      <!-- 导航链接 -->
+      <div class="hidden md:flex items-center gap-6">
+        <a href="index.html" class="text-sm text-gray-400 hover:text-primary-300 transition-colors">
+          <i class="fas fa-home mr-1"></i> 返回主页
+        </a>
+        <button id="export-btn" class="text-sm text-gray-400 hover:text-spring-300 transition-colors">
+          <i class="fas fa-download mr-1"></i> 导出数据
+        </button>
+        <button id="import-btn" class="text-sm text-gray-400 hover:text-spring-300 transition-colors">
+          <i class="fas fa-upload mr-1"></i> 导入数据
+        </button>
+        <button id="reset-btn" class="text-sm text-red-400 hover:text-red-300 transition-colors">
+          <i class="fas fa-trash-alt mr-1"></i> 重置
+        </button>
+        <div class="flex items-center gap-2 pl-4 border-l border-white/10">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-br from-spring-400 to-primary-500 flex items-center justify-center text-white text-xs font-bold" id="user-avatar">?</div>
+          <span class="text-sm text-gray-300" id="user-display">未登录</span>
+          <button id="change-user-btn" class="text-xs text-gray-500 hover:text-gray-300">
+            <i class="fas fa-edit"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 移动端菜单按钮 -->
+      <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- 移动端菜单 -->
+  <div id="mobile-menu" class="md:hidden glass border-b border-white/10 px-6 py-4 hidden">
+    <div class="flex flex-col gap-3">
+      <a href="index.html" class="text-gray-400 hover:text-primary-300 transition-colors py-2">
+        <i class="fas fa-home mr-2"></i> 返回主页
+      </a>
+      <button id="export-btn-mobile" class="text-gray-400 hover:text-spring-300 transition-colors py-2 text-left">
+        <i class="fas fa-download mr-2"></i> 导出数据
+      </button>
+      <button id="import-btn-mobile" class="text-gray-400 hover:text-spring-300 transition-colors py-2 text-left">
+        <i class="fas fa-upload mr-2"></i> 导入数据
+      </button>
+      <button id="reset-btn-mobile" class="text-red-400 hover:text-red-300 transition-colors py-2 text-left">
+        <i class="fas fa-trash-alt mr-2"></i> 重置数据
+      </button>
+    </div>
+  </div>
+
+  <!-- 主内容区域 -->
+  <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
+    <!-- 地图区域 (左侧) -->
+    <div class="flex-1 relative" id="map-container">
+      <div id="map" class="w-full h-full"></div>
+
+      <!-- 地图控制面板 -->
+      <div class="absolute top-4 left-4 flex flex-col gap-2">
+        <div class="glass rounded-lg p-3 card-glow">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="fas fa-map-marker-alt text-spring-400"></i>
+            <span class="text-sm font-medium">地图工具</span>
+          </div>
+          <div class="flex gap-2">
+            <button id="add-marker-btn" class="w-8 h-8 rounded-md bg-spring-500/20 hover:bg-spring-500/30 flex items-center justify-center text-spring-300 transition-colors" title="添加标记">
+              <i class="fas fa-plus"></i>
+            </button>
+            <button id="draw-route-btn" class="w-8 h-8 rounded-md bg-primary-500/20 hover:bg-primary-500/30 flex items-center justify-center text-primary-300 transition-colors" title="绘制路线">
+              <i class="fas fa-route"></i>
+            </button>
+            <button id="clear-route-btn" class="w-8 h-8 rounded-md bg-red-500/20 hover:bg-red-500/30 flex items-center justify-center text-red-300 transition-colors" title="清除路线">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 搜索框 -->
+        <div class="glass rounded-lg p-3 card-glow w-64">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="fas fa-search text-primary-400"></i>
+            <span class="text-sm font-medium">搜索地点</span>
+          </div>
+          <div class="relative">
+            <input type="text" id="search-input"
+                   class="w-full bg-dark-800/50 border border-white/10 rounded-md py-2 px-3 text-sm focus:outline-none focus:border-spring-400/50 focus:ring-1 focus:ring-spring-400/30"
+                   placeholder="输入地址或景点名称...">
+            <button id="search-btn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-spring-300">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div id="search-results" class="mt-2 max-h-48 overflow-y-auto hidden">
+            <!-- 搜索结果动态填充 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 地图图例 -->
+      <div class="absolute bottom-4 left-4 glass rounded-lg p-3 card-glow w-48">
+        <div class="flex items-center gap-2 mb-2">
+          <i class="fas fa-key text-accent-400"></i>
+          <span class="text-sm font-medium">图例</span>
+        </div>
+        <div class="space-y-1 text-xs">
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-spring-500"></div>
+            <span class="text-gray-300">泉水景点</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-primary-500"></div>
+            <span class="text-gray-300">文化古迹</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-accent-500"></div>
+            <span class="text-gray-300">美食餐饮</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <span class="text-gray-300">住宿休息</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+            <span class="text-gray-300">购物娱乐</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 当前坐标显示 -->
+      <div class="absolute bottom-4 right-4 glass rounded-lg p-3 card-glow">
+        <div class="text-xs text-gray-400">
+          坐标: <span id="current-coords">36.665, 117.120</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 控制面板 (右侧) -->
+    <div class="md:w-96 w-full glass border-l border-white/10 flex flex-col">
+      <!-- 面板头部 -->
+      <div class="border-b border-white/10 p-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-white">
+            <i class="fas fa-sliders-h mr-2 text-spring-400"></i>
+            规划控制台
+          </h2>
+          <div class="flex items-center gap-2">
+            <button id="toggle-stats" class="text-gray-400 hover:text-white">
+              <i class="fas fa-chart-bar"></i>
+            </button>
+            <button id="toggle-help" class="text-gray-400 hover:text-white">
+              <i class="fas fa-question-circle"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 面板内容区域 -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-6">
+        <!-- 统计卡片 -->
+        <div id="stats-card" class="rounded-xl bg-gradient-to-br from-dark-800/50 to-dark-900/50 p-4 border border-white/5 card-glow">
+          <h3 class="text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
+            <i class="fas fa-trophy text-yellow-400"></i>
+            旅游统计
+          </h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-spring-400" id="total-markers">0</div>
+              <div class="text-xs text-gray-400 mt-1">标记点</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-primary-400" id="route-distance">0</div>
+              <div class="text-xs text-gray-400 mt-1">公里</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-accent-400" id="estimated-time">0</div>
+              <div class="text-xs text-gray-400 mt-1">小时</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-yellow-400" id="springs-collected">0</div>
+              <div class="text-xs text-gray-400 mt-1">泉水</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 标记点列表 -->
+        <div class="rounded-xl bg-dark-800/50 p-4 border border-white/5 card-glow">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-medium text-gray-300 flex items-center gap-2">
+              <i class="fas fa-map-pin text-spring-400"></i>
+              标记点列表
+            </h3>
+            <button id="add-new-marker" class="text-xs text-spring-300 hover:text-spring-200">
+              <i class="fas fa-plus mr-1"></i>新增
+            </button>
+          </div>
+          <div id="markers-list" class="space-y-2 max-h-60 overflow-y-auto">
+            <!-- 标记点动态填充 -->
+            <div class="text-center py-4 text-gray-500 text-sm">
+              <i class="fas fa-map-marker-alt text-2xl mb-2"></i>
+              <p>暂无标记点</p>
+              <p class="text-xs mt-1">点击地图或搜索添加</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 路线规划 -->
+        <div class="rounded-xl bg-dark-800/50 p-4 border border-white/5 card-glow">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-medium text-gray-300 flex items-center gap-2">
+              <i class="fas fa-route text-primary-400"></i>
+              路线规划
+            </h3>
+            <button id="optimize-route" class="text-xs text-primary-300 hover:text-primary-200">
+              <i class="fas fa-magic mr-1"></i>优化
+            </button>
+          </div>
+          <div id="route-list" class="space-y-2 max-h-40 overflow-y-auto mb-3">
+            <!-- 路线点动态填充 -->
+            <div class="text-center py-3 text-gray-500 text-sm">
+              <i class="fas fa-route text-xl mb-2"></i>
+              <p>暂无路线</p>
+              <p class="text-xs mt-1">点击"绘制路线"开始</p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button id="calculate-route" class="flex-1 py-2 bg-primary-500/20 hover:bg-primary-500/30 text-primary-300 rounded-md text-sm transition-colors">
+              <i class="fas fa-calculator mr-1"></i>计算
+            </button>
+            <button id="export-route" class="flex-1 py-2 bg-spring-500/20 hover:bg-spring-500/30 text-spring-300 rounded-md text-sm transition-colors">
+              <i class="fas fa-share-alt mr-1"></i>分享
+            </button>
+          </div>
+        </div>
+
+        <!-- 类别管理 -->
+        <div class="rounded-xl bg-dark-800/50 p-4 border border-white/5 card-glow">
+          <h3 class="text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
+            <i class="fas fa-tags text-accent-400"></i>
+            地点类别
+          </h3>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button class="category-btn active px-3 py-1 text-xs rounded-full bg-spring-500/20 text-spring-300 border border-spring-500/30" data-category="spring">
+              泉水景点
+            </button>
+            <button class="category-btn px-3 py-1 text-xs rounded-full bg-primary-500/20 text-primary-300 border border-primary-500/30" data-category="culture">
+              文化古迹
+            </button>
+            <button class="category-btn px-3 py-1 text-xs rounded-full bg-accent-500/20 text-accent-300 border border-accent-500/30" data-category="food">
+              美食餐饮
+            </button>
+            <button class="category-btn px-3 py-1 text-xs rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30" data-category="hotel">
+              住宿休息
+            </button>
+            <button class="category-btn px-3 py-1 text-xs rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30" data-category="shopping">
+              购物娱乐
+            </button>
+          </div>
+          <div class="text-xs text-gray-400">
+            点击类别筛选标记点
+          </div>
+        </div>
+
+        <!-- 添加标记点表单 -->
+        <div id="add-marker-form" class="rounded-xl bg-dark-800/50 p-4 border border-white/5 card-glow hidden">
+          <h3 class="text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
+            <i class="fas fa-plus-circle text-spring-400"></i>
+            添加新标记点
+          </h3>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs text-gray-400 mb-1">地点名称</label>
+              <input type="text" id="marker-name" class="w-full bg-dark-800/50 border border-white/10 rounded-md py-2 px-3 text-sm focus:outline-none focus:border-spring-400/50" placeholder="例如：趵突泉">
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 mb-1">地点描述</label>
+              <textarea id="marker-desc" rows="2" class="w-full bg-dark-800/50 border border-white/10 rounded-md py-2 px-3 text-sm focus:outline-none focus:border-spring-400/50" placeholder="简要描述..."></textarea>
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 mb-1">选择类别</label>
+              <select id="marker-category" class="w-full bg-dark-800/50 border border-white/10 rounded-md py-2 px-3 text-sm focus:outline-none focus:border-spring-400/50">
+                <option value="spring">泉水景点</option>
+                <option value="culture">文化古迹</option>
+                <option value="food">美食餐饮</option>
+                <option value="hotel">住宿休息</option>
+                <option value="shopping">购物娱乐</option>
+              </select>
+            </div>
+            <div class="flex gap-2 pt-2">
+              <button id="save-marker" class="flex-1 py-2 bg-spring-500 hover:bg-spring-600 text-white rounded-md text-sm transition-colors">
+                保存
+              </button>
+              <button id="cancel-marker" class="flex-1 py-2 bg-dark-700 hover:bg-dark-600 text-gray-300 rounded-md text-sm transition-colors">
+                取消
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 帮助提示 -->
+        <div id="help-card" class="rounded-xl bg-dark-800/50 p-4 border border-white/5 card-glow hidden">
+          <h3 class="text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
+            <i class="fas fa-question-circle text-yellow-400"></i>
+            使用帮助
+          </h3>
+          <div class="space-y-2 text-xs text-gray-400">
+            <p><span class="text-spring-300">1.</span> 搜索地点或点击地图添加标记点</p>
+            <p><span class="text-primary-300">2.</span> 为标记点选择类别和添加描述</p>
+            <p><span class="text-accent-300">3.</span> 使用路线规划功能连接标记点</p>
+            <p><span class="text-yellow-300">4.</span> 导出数据与朋友分享你的行程</p>
+            <p class="pt-2 text-gray-500">提示：数据通过 Firebase 实时同步，所有人可见。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 面板底部 -->
+      <div class="border-t border-white/10 p-4">
+        <div class="flex items-center justify-between">
+          <div class="text-xs text-gray-400">
+            <i class="fas fa-database mr-1"></i>
+            <span id="data-status">数据已保存</span>
+          </div>
+          <button id="toggle-fullscreen" class="text-gray-400 hover:text-white">
+            <i class="fas fa-expand"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 底部状态栏 -->
+  <footer class="glass border-t border-white/10 py-2 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
+      <div class="text-xs text-gray-400">
+        <i class="fas fa-info-circle mr-1"></i>
+        济南泉水探索之旅 v1.0 · 小团体内部使用
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="text-xs text-gray-400">
+          已收集 <span class="text-spring-300 font-medium" id="footer-springs">0</span> 个泉水点
+        </div>
+        <div class="text-xs text-gray-400">
+          路线长度: <span class="text-primary-300 font-medium" id="footer-distance">0</span> km
+        </div>
+        <a href="https://map.baidu.com" target="_blank" class="text-xs text-gray-400 hover:text-primary-300">
+          数据来源: 百度地图
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript 代码 -->
+  <script>
+    // ========== Firebase 配置 ==========
+    const FIREBASE_CONFIG = {
+      apiKey: "你的Firebase-apiKey",
+      authDomain: "你的项目.firebaseapp.com",
+      projectId: "你的项目ID",
+      storageBucket: "你的项目.appspot.com",
+      messagingSenderId: "你的SenderId",
+      appId: "你的AppId"
+    };
+
+    // ========== 全局变量 ==========
+    let map = null;
+    let markers = [];
+    let routes = [];
+    let currentCategory = 'spring';
+    let isAddingMarker = false;
+    let isDrawingRoute = false;
+    let tempMarker = null;
+    let currentUser = '';
+    let firestore = null;
+    let dbUnsubscribe = null;
+    let routeLines = [];
+
+    // ========== 初始化入口 ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      initFirebase();
+      initUsernameHandler();
+      initMap();
+      initEventListeners();
+    });
+
+    // ========== Firebase 初始化 ==========
+    function initFirebase() {
+      try {
+        if (!FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey === '你的Firebase-apiKey') {
+          console.warn('Firebase 未配置，使用本地存储');
+          return;
+        }
+        firebase.initializeApp(FIREBASE_CONFIG);
+        firestore = firebase.firestore();
+        console.log('Firebase 已连接');
+      } catch (e) {
+        console.error('Firebase 初始化失败:', e);
+      }
+    }
+
+    // ========== 用户名管理 ==========
+    function initUsernameHandler() {
+      const saved = sessionStorage.getItem('jinan_username');
+      if (saved) {
+        currentUser = saved;
+        document.getElementById('username-modal').classList.add('hidden');
+        updateUserDisplay();
+        startDataSync();
+        return;
+      }
+
+      document.getElementById('username-confirm').addEventListener('click', setUsername);
+      document.getElementById('username-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') setUsername();
+      });
+      document.getElementById('change-user-btn').addEventListener('click', function() {
+        sessionStorage.removeItem('jinan_username');
+        document.getElementById('username-modal').classList.remove('hidden');
+        document.getElementById('username-input').value = currentUser;
+      });
+    }
+
+    function setUsername() {
+      const name = document.getElementById('username-input').value.trim();
+      if (!name) {
+        showNotification('请输入昵称', 'red');
+        return;
+      }
+      currentUser = name;
+      sessionStorage.setItem('jinan_username', name);
+      document.getElementById('username-modal').classList.add('hidden');
+      updateUserDisplay();
+      startDataSync();
+      showNotification(`欢迎，${name}！`, 'spring');
+    }
+
+    function updateUserDisplay() {
+      const avatar = document.getElementById('user-avatar');
+      const display = document.getElementById('user-display');
+      avatar.textContent = currentUser.charAt(0);
+      display.textContent = currentUser;
+    }
+
+    // ========== 数据同步 (Firestore) ==========
+    function startDataSync() {
+      if (!firestore) {
+        loadLocalData();
+        return;
+      }
+
+      // 在线用户追踪
+      initPresence();
+
+      // 实时监听 Firestore 数据变化
+      dbUnsubscribe = firestore.collection('jinan_travel').doc('data')
+        .onSnapshot(function(doc) {
+          if (doc.exists) {
+            const data = doc.data();
+            const remoteMarkers = data.markers || [];
+            const remoteRoutes = data.routes || [];
+
+            // 避免重复刷新：仅当数据真正变化时才刷新
+            const localJson = JSON.stringify({ m: markers, r: routes });
+            const remoteJson = JSON.stringify({ m: remoteMarkers, r: remoteRoutes });
+            if (localJson === remoteJson) return;
+
+            reloadAllMarkers(remoteMarkers, remoteRoutes);
+            updateDataStatus('已同步', 'emerald');
+          } else {
+            // 首次创建空文档
+            firestore.collection('jinan_travel').doc('data').set({
+              markers: [],
+              routes: [],
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+        }, function(error) {
+          console.error('Firestore 同步失败:', error);
+          loadLocalData();
+        });
+    }
+
+    // ========== 在线用户追踪 ==========
+    let presenceInterval = null;
+    function initPresence() {
+      updatePresence();
+      presenceInterval = setInterval(updatePresence, 30000);
+      // 监听在线用户列表
+      firestore.collection('jinan_travel_presence').onSnapshot(function(snapshot) {
+        const now = Date.now();
+        let count = 0;
+        snapshot.forEach(function(doc) {
+          const data = doc.data();
+          if (now - data.lastSeen < 60000) count++;
+        });
+        document.getElementById('online-users').textContent = count + '人';
+      });
+      window.addEventListener('beforeunload', function() {
+        if (presenceInterval) clearInterval(presenceInterval);
+        if (firestore && currentUser) {
+          firestore.collection('jinan_travel_presence').doc(currentUser).delete();
+        }
+      });
+    }
+
+    function updatePresence() {
+      if (!firestore || !currentUser) return;
+      firestore.collection('jinan_travel_presence').doc(currentUser).set({
+        name: currentUser,
+        lastSeen: Date.now()
+      });
+      // 清理30秒前的离线用户
+      const cutoff = Date.now() - 60000;
+      firestore.collection('jinan_travel_presence').get().then(function(snapshot) {
+        snapshot.forEach(function(doc) {
+          if (doc.data().lastSeen < cutoff) {
+            doc.ref.delete();
+          }
+        });
+      });
+    }
+
+    function reloadAllMarkers(newMarkers, newRoutes) {
+      // 清除地图上所有现有标记
+      markers.forEach(m => { if (m.bdMarker) map.removeOverlay(m.bdMarker); });
+      clearRouteLines();
+
+      markers = newMarkers || [];
+      routes = newRoutes || [];
+
+      // 重新绘制标记
+      markers.forEach(m => addMarkerToMap(m));
+      updateStats();
+      updateMarkersList();
+    }
+
+    function saveToFirestore() {
+      if (!firestore) {
+        saveLocalData();
+        return;
+      }
+      firestore.collection('jinan_travel').doc('data').set({
+        markers: markers.map(m => ({
+          id: m.id,
+          name: m.name,
+          description: m.description,
+          category: m.category,
+          lat: m.lat,
+          lng: m.lng,
+          createdAt: m.createdAt,
+          createdBy: m.createdBy
+        })),
+        routes: routes,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(function(error) {
+        console.error('保存到 Firestore 失败:', error);
+        saveLocalData();
+      });
+    }
+
+    // ========== 本地存储 (降级方案) ==========
+    function saveLocalData() {
+      const data = { markers: markers, routes: routes };
+      localStorage.setItem('jinanTravelData', JSON.stringify(data));
+      updateDataStatus('本地已保存', 'yellow');
+    }
+
+    function loadLocalData() {
+      const saved = localStorage.getItem('jinanTravelData');
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          reloadAllMarkers(data.markers || [], data.routes || []);
+          updateDataStatus('本地数据已加载', 'yellow');
+        } catch (e) {
+          console.error('加载本地数据失败:', e);
+        }
+      }
+    }
+
+    // ========== 导出/导入/重置 ==========
+    function exportData() {
+      const data = {
+        markers: markers,
+        routes: routes,
+        exportedAt: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `jinan-travel-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showNotification('数据已导出', 'spring');
+    }
+
+    function importData() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const data = JSON.parse(e.target.result);
+            reloadAllMarkers(data.markers || [], data.routes || []);
+            saveToFirestore();
+            showNotification('数据已导入', 'spring');
+          } catch (err) {
+            showNotification('导入失败: 文件格式错误', 'red');
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    function resetData() {
+      if (!confirm('确定要重置所有数据吗？此操作不可撤销。')) return;
+      markers.forEach(m => { if (m.bdMarker) map.removeOverlay(m.bdMarker); });
+      clearRouteLines();
+      markers = [];
+      routes = [];
+      if (firestore) {
+        firestore.collection('jinan_travel').doc('data').set({
+          markers: [], routes: [],
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      localStorage.removeItem('jinanTravelData');
+      updateStats();
+      updateMarkersList();
+      showNotification('数据已重置', 'red');
+    }
+
+    // ========== 地图初始化 ==========
+    function initMap() {
+      const jinanCenter = new BMap.Point(117.120, 36.665);
+      map = new BMap.Map('map');
+      map.centerAndZoom(jinanCenter, 13);
+      map.addControl(new BMap.NavigationControl());
+      map.addControl(new BMap.ScaleControl());
+      map.addControl(new BMap.MapTypeControl());
+      map.enableScrollWheelZoom(true);
+
+      map.addEventListener('click', function(e) {
+        if (isAddingMarker) showAddMarkerForm(e.point);
+        else if (isDrawingRoute) addRoutePoint(e.point);
+        updateCurrentCoords(e.point);
+      });
+      map.addEventListener('moving', function() {
+        const c = map.getCenter();
+        updateCurrentCoords(c);
+      });
+    }
+
+    // ========== 事件监听 ==========
+    function initEventListeners() {
+      document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+      });
+      document.getElementById('add-marker-btn').addEventListener('click', function() {
+        isAddingMarker = !isAddingMarker;
+        isDrawingRoute = false;
+        this.classList.toggle('bg-spring-500/30', isAddingMarker);
+        document.getElementById('draw-route-btn').classList.remove('bg-primary-500/30');
+        if (isAddingMarker) showNotification('点击地图添加标记点', 'spring');
+      });
+      document.getElementById('draw-route-btn').addEventListener('click', function() {
+        isDrawingRoute = !isDrawingRoute;
+        isAddingMarker = false;
+        this.classList.toggle('bg-primary-500/30', isDrawingRoute);
+        document.getElementById('add-marker-btn').classList.remove('bg-spring-500/30');
+        if (isDrawingRoute) showNotification('点击地图添加路线点', 'primary');
+      });
+      document.getElementById('clear-route-btn').addEventListener('click', clearRoutes);
+      document.getElementById('search-btn').addEventListener('click', performSearch);
+      document.getElementById('search-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') performSearch();
+      });
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentCategory = this.dataset.category;
+          filterMarkersByCategory();
+        });
+      });
+      document.getElementById('add-new-marker').addEventListener('click', function() {
+        document.getElementById('add-marker-form').classList.remove('hidden');
+      });
+      document.getElementById('save-marker').addEventListener('click', saveMarker);
+      document.getElementById('cancel-marker').addEventListener('click', function() {
+        document.getElementById('add-marker-form').classList.add('hidden');
+        resetMarkerForm();
+      });
+      document.getElementById('export-btn').addEventListener('click', exportData);
+      document.getElementById('import-btn').addEventListener('click', importData);
+      document.getElementById('reset-btn').addEventListener('click', resetData);
+      document.getElementById('export-btn-mobile').addEventListener('click', exportData);
+      document.getElementById('import-btn-mobile').addEventListener('click', importData);
+      document.getElementById('reset-btn-mobile').addEventListener('click', resetData);
+      document.getElementById('toggle-help').addEventListener('click', function() {
+        document.getElementById('help-card').classList.toggle('hidden');
+      });
+      document.getElementById('toggle-fullscreen').addEventListener('click', toggleFullscreen);
+    }
+
+        // 显示添加标记点表单
+    function showAddMarkerForm(point) {
+      if (tempMarker) map.removeOverlay(tempMarker);
+      tempMarker = new BMap.Marker(point);
+      map.addOverlay(tempMarker);
+      document.getElementById('add-marker-form').classList.remove('hidden');
+      document.getElementById('marker-name').focus();
+    }
+
+    // 保存标记点
+    function saveMarker() {
+      const name = document.getElementById('marker-name').value.trim();
+      const desc = document.getElementById('marker-desc').value.trim();
+      const category = document.getElementById('marker-category').value;
+      if (!name) { showNotification('请输入地点名称', 'red'); return; }
+      if (!tempMarker) { showNotification('请先选择位置', 'red'); return; }
+      const point = tempMarker.getPosition();
+      const marker = {
+        id: Date.now(),
+        name: name,
+        description: desc,
+        category: category,
+        lat: point.lat,
+        lng: point.lng,
+        createdAt: new Date().toISOString(),
+        createdBy: currentUser
+      };
+      addMarkerToMap(marker);
+      markers.push(marker);
+      saveToFirestore();
+      updateStats();
+      updateMarkersList();
+      document.getElementById('add-marker-form').classList.add('hidden');
+      resetMarkerForm();
+      showNotification('标记点已保存', 'spring');
+    }
+
+    // 添加标记点到地图
+    function addMarkerToMap(marker) {
+      const point = new BMap.Point(marker.lng, marker.lat);
+      const bdMarker = new BMap.Marker(point);
+      const author = marker.createdBy || '匿名';
+      const infoWindow = new BMap.InfoWindow(`
+        <div class="p-2" style="min-width:200px;">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-spring-400 to-primary-500 flex items-center justify-center text-white text-xs font-bold">${author.charAt(0)}</div>
+            <span class="text-xs text-gray-400">${author}</span>
+          </div>
+          <h3 class="font-bold text-base mb-1">${marker.name}</h3>
+          <p class="text-gray-600 text-sm mb-2">${marker.description || '暂无描述'}</p>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs rounded-full ${getCategoryClass(marker.category)}">${getCategoryName(marker.category)}</span>
+            <span class="text-xs text-gray-400">${new Date(marker.createdAt).toLocaleDateString()}</span>
+          </div>
+        </div>
+      `);
+      bdMarker.addEventListener('click', function() { this.openInfoWindow(infoWindow); });
+      bdMarker.addEventListener('rightclick', function() {
+        if (confirm(`确定删除 "${marker.name}" 吗？`)) {
+          map.removeOverlay(this);
+          markers = markers.filter(m => m.id !== marker.id);
+          saveToFirestore();
+          updateStats();
+          updateMarkersList();
+          showNotification('标记点已删除', 'red');
+        }
+      });
+      map.addOverlay(bdMarker);
+      marker.bdMarker = bdMarker;
+    }
+
+    // 搜索功能
+    function performSearch() {
+      const query = document.getElementById('search-input').value.trim();
+      if (!query) return;
+      const local = new BMap.LocalSearch(map, {
+        renderOptions: {map: map, autoViewport: true},
+        onSearchComplete: function(results) {
+          const container = document.getElementById('search-results');
+          container.innerHTML = '';
+          container.classList.remove('hidden');
+          if (local.getStatus() === BMAP_STATUS_SUCCESS) {
+            const pois = results.getCurrentNumPois();
+            if (pois > 0) {
+              for (let i = 0; i < Math.min(pois, 10); i++) {
+                const poi = results.getPoi(i);
+                const div = document.createElement('div');
+                div.className = 'p-2 border-b border-white/10 hover:bg-white/5 cursor-pointer';
+                div.innerHTML = \`<div class="font-medium">\${poi.title}</div><div class="text-xs text-gray-400">\${poi.address || '无地址信息'}</div>\`;
+                div.addEventListener('click', function() {
+                  map.centerAndZoom(poi.point, 16);
+                  container.classList.add('hidden');
+                  document.getElementById('search-input').value = '';
+                });
+                container.appendChild(div);
+              }
+            } else {
+              container.innerHTML = '<div class="p-2 text-gray-400 text-center">未找到结果</div>';
+            }
+          }
+        }
+      });
+      local.search(query);
+    }
+
+    // 路线功能
+    function addRoutePoint(point) {
+      showNotification('路线功能开发中', 'primary');
+    }
+    function clearRoutes() {
+      showNotification('路线功能开发中', 'primary');
+    }
+    function clearRouteLines() {
+      routeLines.forEach(l => { if (l && map) map.removeOverlay(l); });
+      routeLines = [];
+    }
+
+    // 标记点列表渲染
+    function updateMarkersList() {
+      const container = document.getElementById('markers-list');
+      const filtered = currentCategory ? markers.filter(m => m.category === currentCategory) : markers;
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="text-center py-4 text-gray-500 text-sm"><i class="fas fa-map-marker-alt text-2xl mb-2"></i><p>暂无标记点</p><p class="text-xs mt-1">点击地图或搜索添加</p></div>';
+        return;
+      }
+      container.innerHTML = filtered.map(m => {
+        const author = m.createdBy || '匿名';
+        return \`
+          <div class="flex items-center gap-3 p-2 rounded-lg bg-dark-800/50 border border-white/5 hover:bg-dark-700/50 transition-colors group">
+            <div class="w-2 h-2 rounded-full bg-\${m.category === 'spring' ? 'spring' : m.category === 'culture' ? 'primary' : m.category === 'food' ? 'accent' : m.category === 'hotel' ? 'yellow' : 'purple'}-500 shrink-0"></div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium truncate">\${m.name}</div>
+              <div class="text-xs text-gray-500 flex items-center gap-2">
+                <span>\${getCategoryName(m.category)}</span>
+                <span>·</span>
+                <span>\${author}</span>
+              </div>
+            </div>
+            <button class="delete-marker-btn text-gray-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xs" data-id="\${m.id}">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        \`;
+      }).join('');
+      container.querySelectorAll('.delete-marker-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const id = parseInt(this.dataset.id);
+          const marker = markers.find(m => m.id === id);
+          if (marker && confirm(\`确定删除 "\${marker.name}" 吗？\`)) {
+            if (marker.bdMarker) map.removeOverlay(marker.bdMarker);
+            markers = markers.filter(m => m.id !== id);
+            saveToFirestore();
+            updateStats();
+            updateMarkersList();
+            showNotification('已删除', 'red');
+          }
+        });
+      });
+    }
+
+    // 工具函数
+    function updateCurrentCoords(point) {
+      document.getElementById('current-coords').textContent = \`\${point.lat.toFixed(3)}, \${point.lng.toFixed(3)}\`;
+    }
+    function updateStats() {
+      document.getElementById('total-markers').textContent = markers.length;
+      const springCount = markers.filter(m => m.category === 'spring').length;
+      document.getElementById('springs-collected').textContent = springCount;
+      document.getElementById('footer-springs').textContent = springCount;
+      updateMarkersList();
+    }
+    function updateDataStatus(text, color) {
+      const status = document.getElementById('data-status');
+      status.textContent = text;
+      status.className = \`text-\${color}-300\`;
+    }
+    function showNotification(message, color) {
+      console.log(\`[\${color}] \${message}\`);
+    }
+    function filterMarkersByCategory() {
+      updateMarkersList();
+    }
+    function getCategoryName(category) {
+      const names = {spring:'泉水景点', culture:'文化古迹', food:'美食餐饮', hotel:'住宿休息', shopping:'购物娱乐'};
+      return names[category] || '未知类别';
+    }
+    function getCategoryClass(category) {
+      const classes = {spring:'bg-spring-500/20 text-spring-300 border border-spring-500/30', culture:'bg-primary-500/20 text-primary-300 border border-primary-500/30', food:'bg-accent-500/20 text-accent-300 border border-accent-500/30', hotel:'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30', shopping:'bg-purple-500/20 text-purple-300 border border-purple-500/30'};
+      return classes[category] || classes.spring;
+    }
+    function resetMarkerForm() {
+      document.getElementById('marker-name').value = '';
+      document.getElementById('marker-desc').value = '';
+      document.getElementById('marker-category').value = 'spring';
+      if (tempMarker) { map.removeOverlay(tempMarker); tempMarker = null; }
+      isAddingMarker = false;
+      document.getElementById('add-marker-btn').classList.remove('bg-spring-500/30');
+    }
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+  </script>
+</body>
+</html>
