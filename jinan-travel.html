@@ -821,6 +821,10 @@
 
     // ========== 地图初始化 ==========
     function initMap() {
+      if (typeof AMap === 'undefined') {
+        showNotification('高德地图 API 加载失败，请刷新页面重试', 'red');
+        return;
+      }
       map = new AMap.Map('map', {
         center: new AMap.LngLat(117.120, 36.665),
         zoom: 13,
@@ -830,9 +834,14 @@
       map.addControl(new AMap.Scale());
       map.addControl(new AMap.MapType());
 
+      // 初始化搜索自动补全
+      setTimeout(initAutoComplete, 500);
+
       map.on('click', function(e) {
-        if (isAddingMarker) showAddMarkerForm(e.lnglat);
-        else if (isDrawingRoute) addRoutePoint(e.lnglat);
+        if (isAddingMarker) { showAddMarkerForm(e.lnglat); return; }
+        if (isDrawingRoute) { addRoutePoint(e.lnglat); return; }
+      });
+      map.on('mousemove', function(e) {
         updateCurrentCoords(e.lnglat);
       });
       map.on('mapmove', function() {
@@ -874,7 +883,13 @@
         });
       });
       document.getElementById('add-new-marker').addEventListener('click', function() {
+        if (!map) { showNotification('地图未加载完成，请稍后重试', 'red'); return; }
         document.getElementById('add-marker-form').classList.remove('hidden');
+        isAddingMarker = true;
+        isDrawingRoute = false;
+        document.getElementById('add-marker-btn').classList.add('bg-spring-500/30');
+        document.getElementById('draw-route-btn').classList.remove('bg-primary-500/30');
+        showNotification('请点击地图选择位置', 'spring');
       });
       document.getElementById('save-marker').addEventListener('click', saveMarker);
       document.getElementById('cancel-marker').addEventListener('click', function() {
@@ -973,6 +988,10 @@
     function performSearch() {
       const query = document.getElementById('search-input').value.trim();
       if (!query) return;
+      if (typeof AMap === 'undefined' || !AMap.PlaceSearch) {
+        showNotification('地图搜索服务不可用，请检查 API 配置', 'red');
+        return;
+      }
       const placeSearch = new AMap.PlaceSearch({
         city: '济南',
         pageSize: 10,
@@ -1012,6 +1031,27 @@
     }
     function clearRoutes() {
       showNotification('路线功能开发中', 'primary');
+    }
+    function initAutoComplete() {
+      try {
+        if (typeof AMap === 'undefined' || !AMap.AutoComplete) return;
+        const auto = new AMap.AutoComplete({
+          input: 'search-input',
+          city: '济南'
+        });
+        auto.on('select', function(e) {
+          const poi = e.poi;
+          if (poi && poi.location) {
+            map.setCenter(poi.location);
+            map.setZoom(16);
+            document.getElementById('search-results').classList.add('hidden');
+          } else {
+            performSearch();
+          }
+        });
+      } catch(e) {
+        console.warn('自动补全初始化失败:', e);
+      }
     }
     function clearRouteLines() {
       routeLines.forEach(l => { if (l && map) map.remove(l); });
@@ -1079,6 +1119,16 @@
     }
     function showNotification(message, color) {
       console.log(`[${color}] ${message}`);
+      const existing = document.querySelector('.custom-toast');
+      if (existing) existing.remove();
+      const toast = document.createElement('div');
+      toast.className = 'custom-toast fixed top-20 left-1/2 -translate-x-1/2 z-[200] glass rounded-xl px-5 py-3 shadow-lg transition-all duration-300 text-sm font-medium';
+      const colorMap = {spring:'text-spring-300', red:'text-red-300', primary:'text-primary-300', yellow:'text-yellow-300', emerald:'text-emerald-300'};
+      toast.classList.add(colorMap[color] || 'text-gray-200');
+      const iconMap = {spring:'fa-water', red:'fa-exclamation-circle', primary:'fa-info-circle', yellow:'fa-clock', emerald:'fa-check-circle'};
+      toast.innerHTML = `<i class="fas ${iconMap[color] || 'fa-info-circle'} mr-2"></i>${message}`;
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
     }
     function filterMarkersByCategory() {
       updateMarkersList();
