@@ -8,8 +8,8 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- 百度地图API -->
-  <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=你的百度地图AK"></script>
+  <!-- 高德地图API -->
+  <script src="https://webapi.amap.com/maps?v=2.0&key=430fc98d8456f634cbbe076a784f43de"></script>
 
   <!-- Font Awesome 图标 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -526,8 +526,8 @@
         <div class="text-xs text-gray-400">
           路线长度: <span class="text-primary-300 font-medium" id="footer-distance">0</span> km
         </div>
-        <a href="https://map.baidu.com" target="_blank" class="text-xs text-gray-400 hover:text-primary-300">
-          数据来源: 百度地图
+        <a href="https://www.amap.com" target="_blank" class="text-xs text-gray-400 hover:text-primary-300">
+          数据来源: 高德地图
         </a>
       </div>
     </div>
@@ -705,7 +705,7 @@
 
     function reloadAllMarkers(newMarkers, newRoutes) {
       // 清除地图上所有现有标记
-      markers.forEach(m => { if (m.bdMarker) map.removeOverlay(m.bdMarker); });
+      markers.forEach(m => { if (m.mapMarker) map.remove(m.mapMarker); });
       clearRouteLines();
 
       markers = newMarkers || [];
@@ -803,7 +803,7 @@
 
     function resetData() {
       if (!confirm('确定要重置所有数据吗？此操作不可撤销。')) return;
-      markers.forEach(m => { if (m.bdMarker) map.removeOverlay(m.bdMarker); });
+      markers.forEach(m => { if (m.mapMarker) map.remove(m.mapMarker); });
       clearRouteLines();
       markers = [];
       routes = [];
@@ -821,20 +821,21 @@
 
     // ========== 地图初始化 ==========
     function initMap() {
-      const jinanCenter = new BMap.Point(117.120, 36.665);
-      map = new BMap.Map('map');
-      map.centerAndZoom(jinanCenter, 13);
-      map.addControl(new BMap.NavigationControl());
-      map.addControl(new BMap.ScaleControl());
-      map.addControl(new BMap.MapTypeControl());
-      map.enableScrollWheelZoom(true);
-
-      map.addEventListener('click', function(e) {
-        if (isAddingMarker) showAddMarkerForm(e.point);
-        else if (isDrawingRoute) addRoutePoint(e.point);
-        updateCurrentCoords(e.point);
+      map = new AMap.Map('map', {
+        center: new AMap.LngLat(117.120, 36.665),
+        zoom: 13,
+        scrollWheel: true
       });
-      map.addEventListener('moving', function() {
+      map.addControl(new AMap.NavigationControl());
+      map.addControl(new AMap.Scale());
+      map.addControl(new AMap.MapType());
+
+      map.on('click', function(e) {
+        if (isAddingMarker) showAddMarkerForm(e.lnglat);
+        else if (isDrawingRoute) addRoutePoint(e.lnglat);
+        updateCurrentCoords(e.lnglat);
+      });
+      map.on('mapmove', function() {
         const c = map.getCenter();
         updateCurrentCoords(c);
       });
@@ -893,10 +894,10 @@
     }
 
         // 显示添加标记点表单
-    function showAddMarkerForm(point) {
-      if (tempMarker) map.removeOverlay(tempMarker);
-      tempMarker = new BMap.Marker(point);
-      map.addOverlay(tempMarker);
+    function showAddMarkerForm(lnglat) {
+      if (tempMarker) map.remove(tempMarker);
+      tempMarker = new AMap.Marker({position: lnglat});
+      map.add(tempMarker);
       document.getElementById('add-marker-form').classList.remove('hidden');
       document.getElementById('marker-name').focus();
     }
@@ -931,10 +932,11 @@
 
     // 添加标记点到地图
     function addMarkerToMap(marker) {
-      const point = new BMap.Point(marker.lng, marker.lat);
-      const bdMarker = new BMap.Marker(point);
+      const position = new AMap.LngLat(marker.lng, marker.lat);
       const author = marker.createdBy || '匿名';
-      const infoWindow = new BMap.InfoWindow(`
+      const amapMarker = new AMap.Marker({position: position});
+      const infoWindow = new AMap.InfoWindow({
+        content: `
         <div class="p-2" style="min-width:200px;">
           <div class="flex items-center gap-2 mb-2">
             <div class="w-6 h-6 rounded-full bg-gradient-to-br from-spring-400 to-primary-500 flex items-center justify-center text-white text-xs font-bold">${author.charAt(0)}</div>
@@ -947,11 +949,15 @@
             <span class="text-xs text-gray-400">${new Date(marker.createdAt).toLocaleDateString()}</span>
           </div>
         </div>
-      `);
-      bdMarker.addEventListener('click', function() { this.openInfoWindow(infoWindow); });
-      bdMarker.addEventListener('rightclick', function() {
+      `,
+        offset: new AMap.Pixel(0, -30)
+      });
+      amapMarker.on('click', function() {
+        infoWindow.open(map, position);
+      });
+      amapMarker.on('rightclick', function() {
         if (confirm(`确定删除 "${marker.name}" 吗？`)) {
-          map.removeOverlay(this);
+          map.remove(amapMarker);
           markers = markers.filter(m => m.id !== marker.id);
           saveToFirestore();
           updateStats();
@@ -959,42 +965,45 @@
           showNotification('标记点已删除', 'red');
         }
       });
-      map.addOverlay(bdMarker);
-      marker.bdMarker = bdMarker;
+      map.add(amapMarker);
+      marker.mapMarker = amapMarker;
     }
 
     // 搜索功能
     function performSearch() {
       const query = document.getElementById('search-input').value.trim();
       if (!query) return;
-      const local = new BMap.LocalSearch(map, {
-        renderOptions: {map: map, autoViewport: true},
-        onSearchComplete: function(results) {
-          const container = document.getElementById('search-results');
-          container.innerHTML = '';
-          container.classList.remove('hidden');
-          if (local.getStatus() === BMAP_STATUS_SUCCESS) {
-            const pois = results.getCurrentNumPois();
-            if (pois > 0) {
-              for (let i = 0; i < Math.min(pois, 10); i++) {
-                const poi = results.getPoi(i);
-                const div = document.createElement('div');
-                div.className = 'p-2 border-b border-white/10 hover:bg-white/5 cursor-pointer';
-                div.innerHTML = `<div class="font-medium">${poi.title}</div><div class="text-xs text-gray-400">${poi.address || '无地址信息'}</div>`;
-                div.addEventListener('click', function() {
-                  map.centerAndZoom(poi.point, 16);
-                  container.classList.add('hidden');
-                  document.getElementById('search-input').value = '';
-                });
-                container.appendChild(div);
-              }
-            } else {
-              container.innerHTML = '<div class="p-2 text-gray-400 text-center">未找到结果</div>';
-            }
+      const placeSearch = new AMap.PlaceSearch({
+        city: '济南',
+        pageSize: 10,
+        pageIndex: 1
+      });
+      placeSearch.search(query, function(status, result) {
+        const container = document.getElementById('search-results');
+        container.innerHTML = '';
+        container.classList.remove('hidden');
+        if (status === 'complete' && result.info === 'OK' && result.poiList) {
+          const pois = result.poiList.pois;
+          if (pois.length > 0) {
+            pois.forEach(function(poi) {
+              const div = document.createElement('div');
+              div.className = 'p-2 border-b border-white/10 hover:bg-white/5 cursor-pointer';
+              div.innerHTML = `<div class="font-medium">${poi.name}</div><div class="text-xs text-gray-400">${poi.address || '无地址信息'}</div>`;
+              div.addEventListener('click', function() {
+                map.setCenter(poi.location);
+                map.setZoom(16);
+                container.classList.add('hidden');
+                document.getElementById('search-input').value = '';
+              });
+              container.appendChild(div);
+            });
+          } else {
+            container.innerHTML = '<div class="p-2 text-gray-400 text-center">未找到结果</div>';
           }
+        } else {
+          container.innerHTML = '<div class="p-2 text-gray-400 text-center">未找到结果</div>';
         }
       });
-      local.search(query);
     }
 
     // 路线功能
@@ -1005,7 +1014,7 @@
       showNotification('路线功能开发中', 'primary');
     }
     function clearRouteLines() {
-      routeLines.forEach(l => { if (l && map) map.removeOverlay(l); });
+      routeLines.forEach(l => { if (l && map) map.remove(l); });
       routeLines = [];
     }
 
@@ -1041,7 +1050,7 @@
           const id = parseInt(this.dataset.id);
           const marker = markers.find(m => m.id === id);
           if (marker && confirm(`确定删除 "${marker.name}" 吗？`)) {
-            if (marker.bdMarker) map.removeOverlay(marker.bdMarker);
+            if (marker.mapMarker) map.remove(marker.mapMarker);
             markers = markers.filter(m => m.id !== id);
             saveToFirestore();
             updateStats();
@@ -1086,7 +1095,7 @@
       document.getElementById('marker-name').value = '';
       document.getElementById('marker-desc').value = '';
       document.getElementById('marker-category').value = 'spring';
-      if (tempMarker) { map.removeOverlay(tempMarker); tempMarker = null; }
+      if (tempMarker) { map.remove(tempMarker); tempMarker = null; }
       isAddingMarker = false;
       document.getElementById('add-marker-btn').classList.remove('bg-spring-500/30');
     }

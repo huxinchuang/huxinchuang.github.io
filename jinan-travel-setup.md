@@ -6,43 +6,32 @@
 
 | 平台 | 用途 | 注册地址 |
 |------|------|----------|
-| 百度地图开放平台 | 地图显示、地址搜索 | https://lbsyun.baidu.com/ |
+| 高德地图开放平台 | 地图显示、地址搜索 | https://lbs.amap.com/ |
 | Google Firebase | 多人实时数据同步 | https://console.firebase.google.com/ |
 
 ---
 
-## 一、百度地图 API 配置
+## 一、高德地图 API 配置
 
 ### 1. 注册并创建应用
 
-1. 登录 [百度地图开放平台](https://lbsyun.baidu.com/)
+1. 登录 [高德地图开放平台](https://lbs.amap.com/)
 2. 点击右上角「控制台」→「应用管理」→「我的应用」
-3. 点击「创建应用」
+3. 点击「创建新应用」
    - **应用名称**: 任意填写（如"济南旅游规划"）
-   - **应用类型**: 选择「浏览器端」
-   - **Referer白名单**: 开发阶段填 `*`，上线后改为你的域名
-4. 创建成功后，复制 **AK（访问密钥）**
+   - **应用类型**: 选择「Web端（JS API）」
+4. 创建成功后，点击「添加 Key」:
+   - **Key 名称**: 任意填写
+   - **服务平台**: 选择「Web端（JS API）」
+   - **域名白名单**: 开发阶段留空，上线后改为你的域名
+5. 复制生成的 **Key**
 
 ### 2. 填入项目
 
-打开 `jinan-travel.html`，找到以下两处并替换：
+打开 `jinan-travel.html`，找到第 12 行，将 `你的高德Key` 替换为粘贴你的 Key：
 
-**第1处（约第12行）**：
 ```html
-<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=你的百度地图AK"></script>
-```
-改为：
-```html
-<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=这里粘贴你的AK"></script>
-```
-
-**第2处（约第560行）**：
-```javascript
-const BAIDU_MAP_AK = '你的百度地图AK';
-```
-改为：
-```javascript
-const BAIDU_MAP_AK = '这里粘贴你的AK';
+<script src="https://webapi.amap.com/maps?v=2.0&key=这里粘贴你的Key"></script>
 ```
 
 ### 3. 验证地图
@@ -159,9 +148,9 @@ firebase deploy
 ## 四、常见问题
 
 ### 地图不显示
-- 检查 AK 是否正确粘贴
-- 检查百度地图控制台 → 应用管理 → 是否启用了「浏览器端」
-- 本地打开时（file://），Referer 白名单需要包含 `*`
+- 检查 Key 是否正确粘贴
+- 检查高德地图控制台 → 应用管理 → 是否选择「Web端（JS API）」
+- 本地打开时（file://），域名白名单需要留空
 
 ### Firebase 同步失败
 - 检查 `FIREBASE_CONFIG` 的 6 个字段是否都正确粘贴
@@ -182,7 +171,7 @@ firebase deploy
 
 ## 五、配置检查清单
 
-- [ ] 百度地图 AK 已替换（第12行 + 第560行）
+- [ ] 高德地图 Key 已替换（第 12 行）
 - [ ] Firebase 配置已替换（FIREBASE_CONFIG 的6个字段）
 - [ ] Firestore 数据库已创建
 - [ ] Firestore 安全规则已发布

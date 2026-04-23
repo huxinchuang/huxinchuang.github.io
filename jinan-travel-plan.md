@@ -5,7 +5,7 @@
 
 ## 技术栈
 - HTML/CSS/JavaScript
-- 百度地图API（适合中国地区）
+- 高德地图API（适合中国地区）
 - Tailwind CSS（与现有站点风格一致）
 - **Firebase Firestore**（多人实时协作）
 - LocalStorage（离线降级方案）
@@ -14,7 +14,7 @@
 ## 功能模块
 
 ### 1. 地图模块
-- 百度地图集成
+- 高德地图集成
 - 济南市中心默认视图
 - 缩放、平移控制
 - 地图样式定制（旅游主题）
@@ -61,7 +61,7 @@
 
 ## 开发步骤
 1. 创建基础HTML结构
-2. 集成百度地图API
+2. 集成高德地图API
 3. 实现搜索功能
 4. 实现标记点管理
 5. 实现路线规划
@@ -78,11 +78,11 @@
 
 ## 部署说明
 
-### 1. 百度地图API配置
-1. 访问百度地图开放平台 (https://lbsyun.baidu.com/)
+### 1. 高德地图API配置
+1. 访问高德地图开放平台 (https://lbs.amap.com/)
 2. 注册账号并创建应用
-3. 获取API密钥 (AK)
-4. 在 `jinan-travel.html` 第12行和第552行替换 `你的百度地图AK` 为实际AK
+3. 获取Key
+4. 在 `jinan-travel.html` 第 12 行替换 `你的高德Key` 为实际 Key
 
 ### 2. Firebase配置
 1. 访问 Firebase Console (https://console.firebase.google.com/)
