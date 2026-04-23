@@ -544,7 +544,7 @@
         messagingSenderId: "139245224885",
         appId: "1:139245224885:web:27d1ed8c77524b2cfb4ffc",
     };
-
+    console.log('hello');
     // ========== 全局变量 ==========
     let map = null;
     let markers = [];
@@ -569,7 +569,7 @@
     // ========== Firebase 初始化 ==========
     function initFirebase() {
       try {
-        if (!FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey === '你的Firebase-apiKey') {
+        if (!FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey === 'AIzaSyAblHvnKvtIm0yHq3AwJ8tAwLPhJ3EzGjk') {
           console.warn('Firebase 未配置，使用本地存储');
           return;
         }
