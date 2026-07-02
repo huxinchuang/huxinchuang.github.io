@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>邀请函 - 来我家玩</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans SC', 'sans-serif'],
+            hand: ['Ma Shan Zheng', 'cursive'],
+          },
+          colors: {
+            primary: { 50:'#f0f9ff', 100:'#e0f2fe', 200:'#bae6fd', 300:'#7dd3fc', 400:'#38bdf8', 500:'#0ea5e9', 600:'#0284c7', 700:'#0369a1' },
+            accent: { 50:'#fdf4ff', 100:'#fae8ff', 200:'#f5d0fe', 300:'#f0abfc', 400:'#e879f9', 500:'#d946ef', 600:'#c026d3' },
+            warm: { 50:'#fffbeb', 100:'#fef3c7', 200:'#fde68a', 300:'#fcd34d', 400:'#fbbf24', 500:'#f59e0b' },
+            dark: { 800:'#1e293b', 900:'#0f172a', 950:'#020617' }
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'float-delayed': 'float 6s ease-in-out 2s infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'sparkle': 'sparkle 2s ease-in-out infinite',
+            'fade-in-up': 'fadeInUp 1s ease-out forwards',
+            'fade-in': 'fadeIn 1.5s ease-out forwards',
+            'expand': 'expand 0.8s ease-out forwards',
+          },
+          keyframes: {
+            float: { '0%, 100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-20px)' } },
+            sparkle: { '0%, 100%': { opacity: 0.3, transform: 'scale(0.8)' }, '50%': { opacity: 1, transform: 'scale(1.2)' } },
+            fadeInUp: { '0%': { opacity: 0, transform: 'translateY(40px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+            expand: { '0%': { transform: 'scale(0.8)', opacity: 0 }, '100%': { transform: 'scale(1)', opacity: 1 } },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
+    body {
+      background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e293b 100%);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 装饰光晕 */
+    .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 邀请卡毛玻璃 */
+    .invitation-glass {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* 金色装饰线 */
+    .gold-line {
+      background: linear-gradient(90deg, transparent, #f59e0b, #fbbf24, #f59e0b, transparent);
+    }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.3); border-radius: 3px; }
+
+    /* 信封折痕装饰 */
+    .envelope-flap {
+      position: relative;
+    }
+    .envelope-flap::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 30px solid transparent;
+      border-right: 30px solid transparent;
+      border-bottom: 40px solid rgba(245, 158, 11, 0.15);
+    }
+
+    /* 粒子 */
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="font-sans text-gray-200 min-h-screen flex items-center justify-center p-4 md:p-8">
+
+  <!-- 背景装饰光晕 -->
+  <div class="glow-orb w-96 h-96 bg-warm-500/5 top-[-10%] left-[-10%]"></div>
+  <div class="glow-orb w-80 h-80 bg-primary-500/5 bottom-[-10%] right-[-10%]"></div>
+  <div class="glow-orb w-64 h-64 bg-accent-500/5 top-[40%] right-[-5%]"></div>
+
+  <!-- 浮动装饰图标 -->
+  <i class="fas fa-star text-warm-400/20 text-2xl absolute top-[15%] left-[8%] animate-sparkle"></i>
+  <i class="fas fa-star text-warm-400/15 text-xl absolute top-[25%] right-[12%] animate-sparkle" style="animation-delay: 0.7s;"></i>
+  <i class="fas fa-star text-warm-400/10 text-lg absolute bottom-[30%] left-[5%] animate-sparkle" style="animation-delay: 1.4s;"></i>
+  <i class="fas fa-star text-warm-400/15 text-sm absolute bottom-[20%] right-[8%] animate-sparkle" style="animation-delay: 0.3s;"></i>
+
+  <!-- === 邀请函主卡片 === -->
+  <div class="relative z-10 w-full max-w-2xl invitation-glass rounded-3xl p-[2px] animate-expand" style="animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards;">
+    <!-- 金色边框内层 -->
+    <div class="rounded-[calc(1.5rem-2px)] bg-dark-950/80 backdrop-blur-sm overflow-hidden">
+
+      <!-- 顶部装饰 -->
+      <div class="relative pt-12 pb-6 px-8 md:px-16 text-center">
+        <!-- 装饰线条 -->
+        <div class="gold-line h-[2px] w-24 mx-auto mb-8 rounded-full"></div>
+
+        <!-- 信封图标 -->
+        <div class="text-warm-400 text-4xl mb-4 animate-float">
+          <i class="fas fa-envelope-open-text"></i>
+        </div>
+
+        <!-- 邀请标题 -->
+        <h1 class="font-hand text-5xl md:text-7xl text-warm-300 mb-3" style="animation: fadeInUp 1s ease-out 0.4s both;">
+          邀请函
+        </h1>
+        <p class="text-gray-400 text-sm md:text-base tracking-widest" style="animation: fadeInUp 1s ease-out 0.6s both;">
+          — 诚邀您来我家做客 —
+        </p>
+
+        <div class="gold-line h-[1px] w-32 mx-auto mt-6 rounded-full"></div>
+      </div>
+
+      <!-- 正文 -->
+      <div class="px-8 md:px-16 pb-8 space-y-6">
+        <!-- 称呼 -->
+        <p class="text-lg md:text-xl text-gray-200 font-medium" style="animation: fadeInUp 1s ease-out 0.8s both;">
+          亲爱的朋友：
+        </p>
+
+        <!-- 邀请正文 -->
+        <div class="space-y-4 text-gray-300 leading-relaxed" style="animation: fadeInUp 1s ease-out 1.0s both;">
+          <p>
+            好久不见，甚是想念！在这个美好的夏日，我想邀请你
+            <span class="text-warm-300 font-bold">2026年7月4日（星期六）</span>
+            来我家做客，一起共进晚餐，叙叙旧、聊聊天。
+          </p>
+          <p>
+            我住在 <span class="text-warm-300 font-bold">骏皇嘉园24F</span>，视野很好，
+            可以一起看日落、吹吹风。晚餐我亲自下厨，准备了些家常菜，
+            希望你能喜欢！
+          </p>
+          <p class="text-gray-400 italic text-sm">
+            不用带什么东西，人来就好 :)
+          </p>
+        </div>
+
+        <!-- 信息卡片 -->
+        <div class="grid gap-4 pt-2" style="animation: fadeInUp 1s ease-out 1.2s both;">
+          <div class="flex items-center gap-4 p-4 rounded-xl bg-dark-800/50 border border-white/5">
+            <div class="w-10 h-10 rounded-full bg-warm-500/15 flex items-center justify-center text-warm-400 shrink-0">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">日期</p>
+              <p class="text-gray-200 font-medium">2026年7月4日（星期六）</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 p-4 rounded-xl bg-dark-800/50 border border-white/5">
+            <div class="w-10 h-10 rounded-full bg-warm-500/15 flex items-center justify-center text-warm-400 shrink-0">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">时间</p>
+              <p class="text-gray-200 font-medium">傍晚 18:00</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 p-4 rounded-xl bg-dark-800/50 border border-white/5">
+            <div class="w-10 h-10 rounded-full bg-warm-500/15 flex items-center justify-center text-warm-400 shrink-0">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">地点</p>
+              <p class="text-gray-200 font-medium">骏皇嘉园 24F</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 活动安排 -->
+        <div class="rounded-xl bg-dark-800/30 border border-white/5 p-5" style="animation: fadeInUp 1s ease-out 1.3s both;">
+          <h3 class="text-sm font-medium text-warm-300 mb-3 flex items-center gap-2">
+            <i class="fas fa-list-check"></i>
+            当晚安排
+          </h3>
+          <div class="space-y-2 text-sm text-gray-400">
+            <div class="flex items-center gap-3">
+              <span class="text-warm-400 font-medium w-14">18:00</span>
+              <span>签到入座，先喝点东西聊聊天</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-warm-400 font-medium w-14">18:30</span>
+              <span>晚餐正式开始</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-warm-400 font-medium w-14">20:00</span>
+              <span>阳台看夜景 / 桌游 / 自由活动</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-warm-400 font-medium w-14">随缘</span>
+              <span>尽兴而归～</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 回复部分 -->
+        <div class="text-center pt-4" style="animation: fadeInUp 1s ease-out 1.5s both;">
+          <p class="text-gray-400 mb-4">期待你的到来！🌙</p>
+          <div class="flex flex-wrap gap-3 justify-center">
+            <a href="sms:&body=我去！7月4号见 🎉" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-warm-500 to-warm-400 text-dark-950 font-semibold hover:shadow-lg hover:shadow-warm-500/25 transition-all hover:-translate-y-0.5">
+              <i class="fas fa-check-circle"></i>
+              我要去！
+            </a>
+            <a href="sms:&body=抱歉这次去不了，下次一定 😅" class="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/10 text-gray-300 hover:border-warm-400/50 hover:text-warm-300 transition-all hover:-translate-y-0.5">
+              <i class="fas fa-times-circle"></i>
+              这次去不了
+            </a>
+          </div>
+          <p class="text-xs text-gray-500 mt-4">点击按钮通过短信回复</p>
+        </div>
+      </div>
+
+      <!-- 底部装饰 -->
+      <div class="px-8 md:px-16 pb-10 text-center">
+        <div class="gold-line h-[1px] w-full mb-6 rounded-full"></div>
+        <p class="text-gray-500 text-sm">
+          期待与你相聚 · 骏皇嘉园
+        </p>
+        <p class="text-gray-600 text-xs mt-1">— 到时见 —</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 返回链接 -->
+  <a href="index.html" class="fixed top-6 left-6 z-20 w-10 h-10 rounded-xl bg-dark-800/50 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary-400 transition-all backdrop-blur-sm">
+    <i class="fas fa-arrow-left"></i>
+  </a>
+
+  <script>
+    // 生成随机浮动粒子
+    (function() {
+      const colors = ['rgba(245, 158, 11, 0.3)', 'rgba(14, 165, 233, 0.2)', 'rgba(217, 70, 239, 0.2)', 'rgba(251, 191, 36, 0.15)'];
+      for (let i = 0; i < 30; i++) {
+        const el = document.createElement('div');
+        el.className = 'particle';
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const size = Math.random() * 3 + 2;
+        el.style.cssText = `
+          width: ${size}px; height: ${size}px;
+          background: ${color};
+          left: ${Math.random() * 100}%;
+          top: ${Math.random() * 100}%;
+          animation: float ${4 + Math.random() * 6}s ease-in-out ${Math.random() * 4}s infinite;
+          opacity: ${0.2 + Math.random() * 0.3};
+        `;
+        document.body.appendChild(el);
+      }
+    })();
+  </script>
+</body>
+</html>
