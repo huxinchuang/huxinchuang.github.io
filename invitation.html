@@ -248,7 +248,7 @@
               导航前往
             </button>
           </div>
-          <p class="text-xs text-gray-500 mt-4">点击按钮查看骏皇嘉园位置 </p>
+          <p class="text-xs text-gray-500 mt-4">点击按钮查看骏皇嘉园位置</p>
         </div>
       </div>
 
@@ -260,19 +260,19 @@
             <p class="text-xs text-gray-500 mt-1">骏皇嘉园 24F</p>
           </div>
           <div class="grid grid-cols-2 gap-3">
-            <a href="https://maps.apple.com/?q=骏皇嘉园" target="_blank" onclick="closeMapSelector()" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
+            <a href="javascript:openMap('apple')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
               <i class="fab fa-apple text-2xl"></i>
               <span class="text-sm">苹果地图</span>
             </a>
-            <a href="https://ditu.amap.com/search?query=骏皇嘉园" target="_blank" onclick="closeMapSelector()" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
+            <a href="javascript:openMap('amap')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
               <i class="fas fa-map text-2xl"></i>
               <span class="text-sm">高德地图</span>
             </a>
-            <a href="https://api.map.baidu.com/place/search?query=骏皇嘉园&output=html" target="_blank" onclick="closeMapSelector()" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
+            <a href="javascript:openMap('baidu')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
               <i class="fas fa-location-dot text-2xl"></i>
               <span class="text-sm">百度地图</span>
             </a>
-            <a href="https://maps.google.com/?q=骏皇嘉园" target="_blank" onclick="closeMapSelector()" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
+            <a href="javascript:openMap('google')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
               <i class="fab fa-google text-2xl"></i>
               <span class="text-sm">Google Maps</span>
             </a>
@@ -331,6 +331,28 @@
     document.getElementById('mapModal').addEventListener('click', function(e) {
       if (e.target === this) closeMapSelector();
     });
+
+    // 唤起地图 App
+    function openMap(app) {
+      closeMapSelector();
+      const urls = {
+        apple: 'https://maps.apple.com/?q=骏皇嘉园',
+        amap: 'https://uri.amap.com/search?keyword=骏皇嘉园',
+        baidu: 'baidumap://map/place/search?query=骏皇嘉园',
+        google: 'https://maps.google.com/?q=骏皇嘉园',
+      };
+      // 先尝试打开 App，200ms 后如果页面还在则跳转网页版
+      if (app === 'baidu') {
+        var w = window.open(urls.baidu, '_blank');
+        setTimeout(function() {
+          if (w && !w.closed) w.location = 'https://map.baidu.com/search/骏皇嘉园';
+        }, 500);
+      } else if (app === 'amap') {
+        window.location.href = urls.amap;
+      } else {
+        window.open(urls[app], '_blank');
+      }
+    }
   </script>
 </body>
 </html>
