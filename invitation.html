@@ -239,16 +239,47 @@
         <div class="text-center pt-4" style="animation: fadeInUp 1s ease-out 1.5s both;">
           <p class="text-gray-400 mb-4">期待你的到来！🌙</p>
           <div class="flex flex-wrap gap-3 justify-center">
-            <a href="sms:&body=我去！7月4号见 🎉" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-warm-500 to-warm-400 text-dark-950 font-semibold hover:shadow-lg hover:shadow-warm-500/25 transition-all hover:-translate-y-0.5">
-              <i class="fas fa-check-circle"></i>
-              我要去！
+            <button onclick="openMapSelector()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-warm-500 to-warm-400 text-dark-950 font-semibold hover:shadow-lg hover:shadow-warm-500/25 transition-all hover:-translate-y-0.5 cursor-pointer">
+              <i class="fas fa-map-marker-alt"></i>
+              查看地图
+            </button>
+            <button onclick="openMapSelector()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/10 text-gray-300 hover:border-warm-400/50 hover:text-warm-300 transition-all hover:-translate-y-0.5 cursor-pointer">
+              <i class="fas fa-location-dot"></i>
+              导航前往
+            </button>
+          </div>
+          <p class="text-xs text-gray-500 mt-4">点击按钮查看骏皇嘉园位置</p>
+        </div>
+      </div>
+
+      <!-- 地图选择弹窗 -->
+      <div id="mapModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);">
+        <div class="w-full max-w-sm invitation-glass rounded-2xl p-6 animate-expand border border-white/10">
+          <div class="text-center mb-5">
+            <h3 class="text-lg font-medium text-warm-300">选择地图</h3>
+            <p class="text-xs text-gray-500 mt-1">骏皇嘉园 24F</p>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="https://maps.apple.com/?q=骏皇嘉园" target="_blank" onclick="closeMapSelector()" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
+              <i class="fab fa-apple text-2xl"></i>
+              <span class="text-sm">苹果地图</span>
             </a>
-            <a href="sms:&body=抱歉这次去不了，下次一定 😅" class="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/10 text-gray-300 hover:border-warm-400/50 hover:text-warm-300 transition-all hover:-translate-y-0.5">
-              <i class="fas fa-times-circle"></i>
-              这次去不了
+            <a href="https://ditu.amap.com/search?query=骏皇嘉园" target="_blank" onclick="closeMapSelector()" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
+              <i class="fas fa-map text-2xl"></i>
+              <span class="text-sm">高德地图</span>
+            </a>
+            <a href="https://api.map.baidu.com/place/search?query=骏皇嘉园&output=html" target="_blank" onclick="closeMapSelector()" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
+              <i class="fas fa-location-dot text-2xl"></i>
+              <span class="text-sm">百度地图</span>
+            </a>
+            <a href="https://maps.google.com/?q=骏皇嘉园" target="_blank" onclick="closeMapSelector()" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-dark-800/50 border border-white/5 hover:border-warm-400/50 hover:text-warm-300 transition-all text-gray-300">
+              <i class="fab fa-google text-2xl"></i>
+              <span class="text-sm">Google Maps</span>
             </a>
           </div>
-          <p class="text-xs text-gray-500 mt-4">点击按钮通过短信回复</p>
+          <button onclick="closeMapSelector()" class="w-full mt-4 px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:border-white/20 transition-all text-sm cursor-pointer">
+            取消
+          </button>
         </div>
       </div>
 
@@ -288,6 +319,18 @@
         document.body.appendChild(el);
       }
     })();
+
+    // 地图选择弹窗
+    function openMapSelector() {
+      document.getElementById('mapModal').classList.remove('hidden');
+    }
+    function closeMapSelector() {
+      document.getElementById('mapModal').classList.add('hidden');
+    }
+    // 点击弹窗背景关闭
+    document.getElementById('mapModal').addEventListener('click', function(e) {
+      if (e.target === this) closeMapSelector();
+    });
   </script>
 </body>
 </html>
