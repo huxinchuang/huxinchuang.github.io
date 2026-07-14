@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>个人主页</title>
+  <title>龙港内报 — 内部报告</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -18,6 +18,9 @@
   <!-- Google Fonts 中文字体 -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 
+  <!-- marked.js 用于渲染 Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
   <script>
     tailwind.config = {
       theme: {
@@ -30,13 +33,6 @@
             accent: { 50:'#fdf4ff', 100:'#fae8ff', 200:'#f5d0fe', 300:'#f0abfc', 400:'#e879f9', 500:'#d946ef', 600:'#c026d3' },
             dark: { 800:'#1e293b', 900:'#0f172a', 950:'#020617' }
           },
-          animation: {
-            'float': 'float 6s ease-in-out infinite',
-            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-          },
-          keyframes: {
-            float: { '0%, 100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-20px)' } },
-          },
         },
       },
     };
@@ -45,7 +41,6 @@
   <style>
     html { scroll-behavior: smooth; scroll-padding-top: 80px; }
 
-    /* 渐变文字 */
     .text-gradient {
       background: linear-gradient(135deg, #0ea5e9, #d946ef);
       -webkit-background-clip: text;
@@ -53,29 +48,66 @@
       background-clip: text;
     }
 
-    /* Hero 背景粒子画布 */
     #particles-canvas { position: absolute; inset: 0; z-index: 0; }
 
-    /* 自定义滚动条 */
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-    /* 毛玻璃导航栏 */
     .glass-nav {
       background: rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
 
-    /* 卡片悬停发光效果 */
     .card-glow {
       transition: all 0.3s ease;
     }
     .card-glow:hover {
       box-shadow: 0 0 30px rgba(14, 165, 233, 0.2), 0 0 60px rgba(217, 70, 239, 0.1);
       transform: translateY(-4px);
+    }
+
+    /* 文章阅读器样式 */
+    #article-reader {
+      display: none;
+    }
+    #article-reader.active {
+      display: block;
+    }
+    .article-content h1 { font-size: 1.75rem; font-weight: 700; color: #fff; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .article-content h2 { font-size: 1.35rem; font-weight: 600; color: #e2e8f0; margin-top: 1.75rem; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .article-content h3 { font-size: 1.15rem; font-weight: 600; color: #cbd5e1; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+    .article-content h4 { font-size: 1rem; font-weight: 600; color: #94a3b8; margin-top: 1rem; margin-bottom: 0.5rem; }
+    .article-content p { color: #94a3b8; line-height: 1.85; margin-bottom: 1rem; }
+    .article-content ul, .article-content ol { color: #94a3b8; line-height: 1.85; margin-bottom: 1rem; padding-left: 1.5rem; }
+    .article-content li { margin-bottom: 0.35rem; }
+    .article-content ul li::marker { color: #0ea5e9; }
+    .article-content ol li::marker { color: #d946ef; }
+    .article-content strong { color: #e2e8f0; font-weight: 600; }
+    .article-content a { color: #38bdf8; text-decoration: underline; text-underline-offset: 2px; }
+    .article-content a:hover { color: #0ea5e9; }
+    .article-content blockquote { border-left: 3px solid #0ea5e9; padding: 0.75rem 1rem; margin: 1rem 0; background: rgba(14,165,233,0.05); border-radius: 0 0.5rem 0.5rem 0; color: #94a3b8; font-style: italic; }
+    .article-content code { background: rgba(255,255,255,0.06); padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.9em; color: #e879f9; }
+    .article-content pre { background: rgba(0,0,0,0.4); padding: 1rem 1.25rem; border-radius: 0.75rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.06); }
+    .article-content pre code { background: none; padding: 0; color: #cbd5e1; font-size: 0.85rem; line-height: 1.7; }
+    .article-content table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 0.875rem; overflow-x: auto; display: block; }
+    .article-content thead { border-bottom: 2px solid rgba(255,255,255,0.1); }
+    .article-content th { padding: 0.6rem 0.75rem; text-align: left; color: #e2e8f0; font-weight: 600; white-space: nowrap; }
+    .article-content td { padding: 0.5rem 0.75rem; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.04); white-space: nowrap; }
+    .article-content tr:hover td { background: rgba(255,255,255,0.02); }
+    .article-content hr { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 2rem 0; }
+    .article-content img { max-width: 100%; border-radius: 0.5rem; margin: 1rem 0; }
+
+    /* 移动端文章内容优化 */
+    @media (max-width: 768px) {
+      .article-content h1 { font-size: 1.35rem; }
+      .article-content h2 { font-size: 1.15rem; }
+      .article-content h3 { font-size: 1rem; }
+      .article-content table { font-size: 0.75rem; }
+      .article-content th, .article-content td { padding: 0.4rem 0.5rem; }
+      .article-content pre { padding: 0.75rem; font-size: 0.8rem; }
     }
   </style>
 </head>
@@ -84,33 +116,36 @@
 
   <!-- ========== 导航栏 ========== -->
   <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-white/5 transition-all duration-300">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-      <!-- Logo / 姓名 -->
-      <a href="#hero" class="text-xl font-bold tracking-wide">
-        <span class="text-gradient">{{你的名字}}</span>
+    <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#hero" class="text-lg md:text-xl font-bold tracking-wide flex items-center gap-2">
+        <i class="fas fa-newspaper text-primary-400"></i>
+        <span class="text-gradient">龙港内报</span>
       </a>
 
       <!-- 桌面端菜单 -->
-      <div class="hidden md:flex items-center gap-8">
+      <div class="hidden md:flex items-center gap-6">
+        <a href="#reports" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">报告</a>
         <a href="#about" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">关于</a>
         <a href="#experience" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">经历</a>
         <a href="#skills" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">技能</a>
         <a href="#projects" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">项目</a>
         <a href="#contact" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">联系</a>
-        <a href="ic-design-career-plan.html" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">IC设计学习</a>
-        <a href="jinan-travel.html" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">济南旅游规划</a>
-        <a href="invitation.html" class="text-sm text-warm-400 hover:text-warm-300 transition-colors"><i class="fas fa-envelope mr-1"></i>邀请函</a>
+        <a href="ic-design-career-plan.html" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">IC设计</a>
+        <a href="jinan-travel.html" class="text-sm text-gray-400 hover:text-primary-400 transition-colors">济南旅游</a>
+        <a href="invitation.html" class="text-sm text-gray-400 hover:text-accent-400 transition-colors"><i class="fas fa-envelope mr-1"></i>邀请函</a>
       </div>
 
-      <!-- 移动端汉堡菜单按钮 -->
-      <button id="menu-toggle" class="md:hidden text-gray-300 hover:text-white">
+      <!-- 移动端汉堡菜单 -->
+      <button id="menu-toggle" class="md:hidden text-gray-300 hover:text-white p-2">
         <i class="fas fa-bars text-xl"></i>
       </button>
     </div>
 
     <!-- 移动端下拉菜单 -->
     <div id="mobile-menu" class="hidden md:hidden bg-dark-900/95 backdrop-blur-md border-t border-white/5 px-6 py-4">
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-3">
+        <a href="#reports" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">📋 报告</a>
         <a href="#about" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">关于</a>
         <a href="#experience" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">经历</a>
         <a href="#skills" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">技能</a>
@@ -118,105 +153,154 @@
         <a href="#contact" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">联系</a>
         <a href="ic-design-career-plan.html" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">IC设计学习</a>
         <a href="jinan-travel.html" class="text-gray-400 hover:text-primary-400 transition-colors mobile-link">济南旅游规划</a>
-        <a href="invitation.html" class="text-warm-400 hover:text-warm-300 transition-colors mobile-link"><i class="fas fa-envelope mr-1"></i>邀请函</a>
+        <a href="invitation.html" class="text-gray-400 hover:text-accent-400 transition-colors mobile-link"><i class="fas fa-envelope mr-1"></i>邀请函</a>
       </div>
     </div>
   </nav>
 
-  <!-- ========== Hero 区 ========== -->
-  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+  <!-- ========== Hero 区 (精简版) ========== -->
+  <section id="hero" class="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden">
     <canvas id="particles-canvas"></canvas>
     <div class="absolute top-1/4 -left-32 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
     <div class="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
 
     <div class="relative z-10 text-center px-6 max-w-3xl">
-      <!-- 头像 -->
-      <div class="mb-8 inline-block animate-float" data-aos="zoom-in" data-aos-duration="800">
-        <div class="w-36 h-36 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 p-1 mx-auto">
-          <div class="w-full h-full rounded-full bg-dark-950 flex items-center justify-center overflow-hidden">
-            <!-- 替换为你的照片: <img src="your-photo.jpg" alt="头像" class="w-full h-full object-cover"> -->
-            <span class="text-4xl font-bold text-gradient">{{照片}}</span>
-          </div>
+      <!-- 图标 -->
+      <div class="mb-6" data-aos="zoom-in" data-aos-duration="600">
+        <div class="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-gradient-to-br from-primary-500/20 to-accent-500/20 border border-white/10 mx-auto flex items-center justify-center">
+          <i class="fas fa-newspaper text-4xl md:text-5xl text-gradient"></i>
         </div>
       </div>
 
       <!-- 主标题 -->
-      <h1 class="text-4xl md:text-6xl font-bold mb-4" data-aos="fade-up" data-aos-delay="200">
-        <span class="text-gradient">{{你的名字}}</span>
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4" data-aos="fade-up" data-aos-delay="200">
+        <span class="text-gradient">龙港内报</span>
       </h1>
 
-      <!-- 一句话定位 -->
-      <p class="text-lg md:text-xl text-gray-400 mb-8 leading-relaxed" data-aos="fade-up" data-aos-delay="400">
-        {{这里写一句话介绍自己，例如：热爱技术的全栈开发者，专注于构建优雅的数字体验}}
+      <!-- 副标题 -->
+      <p class="text-lg md:text-xl text-gray-400 mb-3 leading-relaxed" data-aos="fade-up" data-aos-delay="400">
+        内部报告与文档
+      </p>
+      <p class="text-sm md:text-base text-gray-500 mb-8 max-w-xl mx-auto" data-aos="fade-up" data-aos-delay="500">
+        汇集研究报告、分析文档与学习资料，为团队提供深度信息参考
       </p>
 
-      <!-- CTA 按钮 -->
-      <div class="flex flex-wrap gap-4 justify-center" data-aos="fade-up" data-aos-delay="600">
-        <a href="#projects" class="group relative px-8 py-3 rounded-full font-medium bg-gradient-to-r from-primary-500 to-accent-500 text-white transition-all hover:shadow-lg hover:shadow-primary-500/25">
-          <span>查看作品</span>
-          <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform inline-block"></i>
-        </a>
-        <a href="#contact" class="px-8 py-3 rounded-full font-medium border border-white/10 text-gray-300 hover:border-primary-400 hover:text-white transition-all">
-          联系我
+      <!-- CTA -->
+      <div data-aos="fade-up" data-aos-delay="600">
+        <a href="#reports" class="group relative inline-flex items-center px-8 py-3 rounded-full font-medium bg-gradient-to-r from-primary-500 to-accent-500 text-white transition-all hover:shadow-lg hover:shadow-primary-500/25">
+          <span>浏览报告</span>
+          <i class="fas fa-arrow-down ml-2 group-hover:translate-y-1 transition-transform inline-block"></i>
         </a>
       </div>
     </div>
 
-    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce" data-aos="fade-up" data-aos-delay="1000">
-      <a href="#about" class="text-gray-500 hover:text-primary-400 transition-colors">
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+      <a href="#reports" class="text-gray-500 hover:text-primary-400 transition-colors">
         <i class="fas fa-chevron-down text-xl"></i>
       </a>
     </div>
   </section>
 
-  <!-- ========== 关于我 ========== -->
-  <section id="about" class="py-24 px-6">
+  <!-- ========== 报告列表区 (核心内容) ========== -->
+  <section id="reports" class="py-20 md:py-24 px-4 md:px-6 bg-dark-900/30">
     <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16" data-aos="fade-up">
+      <div class="text-center mb-12 md:mb-16" data-aos="fade-up">
+        <span class="text-sm font-medium text-primary-400 tracking-widest uppercase">REPORTS</span>
+        <h2 class="text-3xl md:text-4xl font-bold mt-2 text-white">内部报告</h2>
+        <div class="w-16 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto mt-4 rounded-full"></div>
+        <p class="text-gray-400 mt-4 max-w-xl mx-auto text-sm md:text-base">点击任意报告卡片即可在线阅读</p>
+      </div>
+
+      <!-- 报告卡片网格 -->
+      <div id="reports-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <!-- JS 动态填充 -->
+      </div>
+
+      <!-- 加载状态 -->
+      <div id="reports-loading" class="text-center py-12">
+        <div class="inline-block w-8 h-8 border-2 border-primary-400 border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-gray-500 mt-3 text-sm">加载报告中...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 文章阅读器 (默认隐藏) ========== -->
+  <section id="article-reader" class="fixed inset-0 z-50 bg-dark-950 overflow-y-auto">
+    <!-- 顶部工具栏 -->
+    <div class="sticky top-0 z-10 glass-nav border-b border-white/5">
+      <div class="max-w-4xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+        <button id="reader-back" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
+          <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+          <span class="text-sm">返回报告列表</span>
+        </button>
+        <span id="reader-title" class="text-sm text-gray-400 truncate max-w-[200px] md:max-w-md"></span>
+        <button id="reader-top" class="text-gray-400 hover:text-white transition-colors" title="回到顶部">
+          <i class="fas fa-chevron-up"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 文章内容区 -->
+    <div class="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12">
+      <div id="reader-loading" class="text-center py-20">
+        <div class="inline-block w-10 h-10 border-2 border-primary-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-gray-500">正在加载文章...</p>
+      </div>
+      <div id="reader-content" class="article-content hidden"></div>
+      <div id="reader-error" class="hidden text-center py-20">
+        <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
+        <p class="text-gray-400">文章加载失败，请稍后重试</p>
+        <button onclick="closeReader()" class="mt-4 px-6 py-2 rounded-full bg-primary-500/20 text-primary-400 hover:bg-primary-500/30 transition-colors text-sm">返回列表</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 关于我 ========== -->
+  <section id="about" class="py-20 md:py-24 px-4 md:px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12 md:mb-16" data-aos="fade-up">
         <span class="text-sm font-medium text-primary-400 tracking-widest uppercase">ABOUT ME</span>
         <h2 class="text-3xl md:text-4xl font-bold mt-2 text-white">关于我</h2>
         <div class="w-16 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto mt-4 rounded-full"></div>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-12 items-start">
-        <!-- 左侧: 基本信息 -->
+      <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
         <div data-aos="fade-right" data-aos-duration="800">
-          <div class="rounded-2xl bg-dark-800/50 border border-white/5 p-8 card-glow">
+          <div class="rounded-2xl bg-dark-800/50 border border-white/5 p-6 md:p-8 card-glow">
             <h3 class="text-xl font-semibold mb-6 text-white">基本信息</h3>
             <div class="space-y-4">
               <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-400"><i class="fas fa-user"></i></div>
-                <div><p class="text-xs text-gray-500 uppercase">姓名</p><p class="text-gray-200">{{你的姓名}}</p></div>
+                <div><p class="text-xs text-gray-500 uppercase">姓名</p><p class="text-gray-200">胡新创</p></div>
               </div>
               <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-400"><i class="fas fa-map-marker-alt"></i></div>
-                <div><p class="text-xs text-gray-500 uppercase">所在地</p><p class="text-gray-200">{{城市, 国家}}</p></div>
+                <div><p class="text-xs text-gray-500 uppercase">所在地</p><p class="text-gray-200">中国</p></div>
               </div>
               <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-400"><i class="fas fa-envelope"></i></div>
-                <div><p class="text-xs text-gray-500 uppercase">邮箱</p><p class="text-gray-200">{{your@email.com}}</p></div>
+                <div><p class="text-xs text-gray-500 uppercase">邮箱</p><p class="text-gray-200">huxinchuang@example.com</p></div>
               </div>
               <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-400"><i class="fas fa-university"></i></div>
-                <div><p class="text-xs text-gray-500 uppercase">学历</p><p class="text-gray-200">{{你的学历和院校}}</p></div>
+                <div><p class="text-xs text-gray-500 uppercase">学历</p><p class="text-gray-200">香港大学 集成电路学院</p></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 右侧: 个人简介 -->
         <div data-aos="fade-left" data-aos-duration="800">
-          <div class="rounded-2xl bg-dark-800/50 border border-white/5 p-8 card-glow">
+          <div class="rounded-2xl bg-dark-800/50 border border-white/5 p-6 md:p-8 card-glow">
             <h3 class="text-xl font-semibold mb-6 text-white">个人简介</h3>
             <div class="space-y-4 text-gray-400 leading-relaxed">
-              <p>{{这里写一段详细的自我介绍。你是谁，你的背景是什么，你正在做什么方向的工作。可以多写几句，让访问者快速了解你。}}</p>
-              <p>{{补充第二段，可以谈谈你的兴趣爱好、职业理念或者你目前关注的技术领域。}}</p>
-              <p>{{第三段可以写你的目标或展望，比如你想成为什么样的人，你在寻找什么机会。}}</p>
+              <p>数字IC设计工程师，专注于集成电路设计与验证领域。计划于2026年9月入读香港大学集成电路学院，致力于通过系统性学习和实践，在毕业时获得高薪且工作舒适的职位。</p>
+              <p>具备数字IC设计基础，正在深入学习SystemVerilog和UVM验证方法学，同时关注交易分析与量化研究。</p>
+              <p>持续学习、不断进步，目标是成为集成电路领域的优秀工程师。</p>
             </div>
-            <div class="grid grid-cols-3 gap-6 mt-8 pt-8 border-t border-white/5">
-              <div class="text-center"><p class="text-2xl font-bold text-gradient">{{x}}</p><p class="text-xs text-gray-500 mt-1 uppercase">年经验</p></div>
-              <div class="text-center"><p class="text-2xl font-bold text-gradient">{{x}}</p><p class="text-xs text-gray-500 mt-1 uppercase">个项目</p></div>
-              <div class="text-center"><p class="text-2xl font-bold text-gradient">{{x}}</p><p class="text-xs text-gray-500 mt-1 uppercase">项技能</p></div>
+            <div class="grid grid-cols-3 gap-4 md:gap-6 mt-8 pt-8 border-t border-white/5">
+              <div class="text-center"><p class="text-2xl font-bold text-gradient">3+</p><p class="text-xs text-gray-500 mt-1 uppercase">年经验</p></div>
+              <div class="text-center"><p class="text-2xl font-bold text-gradient">10+</p><p class="text-xs text-gray-500 mt-1 uppercase">个项目</p></div>
+              <div class="text-center"><p class="text-2xl font-bold text-gradient">8+</p><p class="text-xs text-gray-500 mt-1 uppercase">项技能</p></div>
             </div>
           </div>
         </div>
@@ -225,111 +309,92 @@
   </section>
 
   <!-- ========== 经历时间线 ========== -->
-  <section id="experience" class="py-24 px-6 bg-dark-900/50">
+  <section id="experience" class="py-20 md:py-24 px-4 md:px-6 bg-dark-900/50">
     <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16" data-aos="fade-up">
+      <div class="text-center mb-12 md:mb-16" data-aos="fade-up">
         <span class="text-sm font-medium text-accent-400 tracking-widest uppercase">EXPERIENCE</span>
         <h2 class="text-3xl md:text-4xl font-bold mt-2 text-white">工作经历</h2>
         <div class="w-16 h-1 bg-gradient-to-r from-accent-500 to-primary-500 mx-auto mt-4 rounded-full"></div>
       </div>
 
       <div class="relative">
-        <div class="hidden md:block timeline-line" style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,transparent,#0ea5e9,#d946ef,transparent);transform:translateX(-50%);z-index:0;"></div>
+        <div class="hidden md:block" style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,transparent,#0ea5e9,#d946ef,transparent);transform:translateX(-50%);z-index:0;"></div>
 
-        <!-- 经历 1 (左) -->
         <div class="relative flex flex-col md:flex-row items-center mb-12 last:mb-0">
           <div class="w-full md:w-1/2 md:pr-12 md:text-right pl-8 md:pl-0" data-aos="fade-right">
             <div class="rounded-xl bg-dark-800/50 border border-white/5 p-6 card-glow inline-block">
-              <span class="text-xs text-primary-400 font-medium">{{开始日期}} — {{结束日期}}</span>
-              <h3 class="text-lg font-semibold text-white mt-2">{{公司/学校名称}}</h3>
-              <p class="text-sm text-accent-400 mt-1">{{职位/专业/头衔}}</p>
-              <p class="text-sm text-gray-400 mt-3 leading-relaxed">{{描述这段经历的职责、成就和学到的东西。}}</p>
+              <span class="text-xs text-primary-400 font-medium">2024 — 至今</span>
+              <h3 class="text-lg font-semibold text-white mt-2">数字IC设计工程师</h3>
+              <p class="text-sm text-accent-400 mt-1">IC设计公司</p>
+              <p class="text-sm text-gray-400 mt-3 leading-relaxed">负责数字IC设计流程中的RTL设计与验证工作，使用SystemVerilog进行模块级和系统级验证。</p>
             </div>
           </div>
           <div class="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gradient-to-r from-primary-500 to-accent-500 hidden md:block ring-4 ring-dark-950 z-10"></div>
           <div class="hidden md:block w-1/2 md:pl-12"></div>
         </div>
 
-        <!-- 经历 2 (右) -->
         <div class="relative flex flex-col md:flex-row items-center mb-12 last:mb-0">
           <div class="hidden md:block w-1/2 md:pr-12"></div>
           <div class="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gradient-to-r from-accent-500 to-primary-500 hidden md:block ring-4 ring-dark-950 z-10"></div>
           <div class="w-full md:w-1/2 md:pl-12 pl-8" data-aos="fade-left">
             <div class="rounded-xl bg-dark-800/50 border border-white/5 p-6 card-glow">
-              <span class="text-xs text-accent-400 font-medium">{{开始日期}} — {{结束日期}}</span>
-              <h3 class="text-lg font-semibold text-white mt-2">{{公司/学校名称}}</h3>
-              <p class="text-sm text-primary-400 mt-1">{{职位/专业/头衔}}</p>
-              <p class="text-sm text-gray-400 mt-3 leading-relaxed">{{描述这段经历的详细内容。突出亮点数据。}}</p>
+              <span class="text-xs text-accent-400 font-medium">2026.09 — 2027.09</span>
+              <h3 class="text-lg font-semibold text-white mt-2">香港大学</h3>
+              <p class="text-sm text-primary-400 mt-1">集成电路学院 · 硕士</p>
+              <p class="text-sm text-gray-400 mt-3 leading-relaxed">深入学习集成电路设计、验证与测试方法学，参与实际芯片设计项目。</p>
             </div>
           </div>
-        </div>
-
-        <!-- 经历 3 (左) -->
-        <div class="relative flex flex-col md:flex-row items-center mb-12 last:mb-0">
-          <div class="w-full md:w-1/2 md:pr-12 md:text-right pl-8 md:pl-0" data-aos="fade-right">
-            <div class="rounded-xl bg-dark-800/50 border border-white/5 p-6 card-glow inline-block">
-              <span class="text-xs text-primary-400 font-medium">{{开始日期}} — {{结束日期}}</span>
-              <h3 class="text-lg font-semibold text-white mt-2">{{公司/学校名称}}</h3>
-              <p class="text-sm text-accent-400 mt-1">{{职位/专业/头衔}}</p>
-              <p class="text-sm text-gray-400 mt-3 leading-relaxed">{{在此添加更多经历，遵循相同格式。}}</p>
-            </div>
-          </div>
-          <div class="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gradient-to-r from-primary-500 to-accent-500 hidden md:block ring-4 ring-dark-950 z-10"></div>
-          <div class="hidden md:block w-1/2 md:pl-12"></div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ========== 技能栈 ========== -->
-  <section id="skills" class="py-24 px-6">
+  <section id="skills" class="py-20 md:py-24 px-4 md:px-6">
     <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16" data-aos="fade-up">
+      <div class="text-center mb-12 md:mb-16" data-aos="fade-up">
         <span class="text-sm font-medium text-primary-400 tracking-widest uppercase">SKILLS</span>
         <h2 class="text-3xl md:text-4xl font-bold mt-2 text-white">技能栈</h2>
         <div class="w-16 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto mt-4 rounded-full"></div>
       </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- 前端开发 -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <div class="rounded-xl bg-dark-800/50 border border-white/5 p-6 card-glow" data-aos="fade-up" data-aos-delay="0">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-12 h-12 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-400 text-xl"><i class="fas fa-code"></i></div>
-            <h3 class="text-lg font-semibold text-white">前端开发</h3>
+            <div class="w-12 h-12 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-400 text-xl"><i class="fas fa-microchip"></i></div>
+            <h3 class="text-lg font-semibold text-white">数字IC设计</h3>
           </div>
           <div class="flex flex-wrap gap-2">
-            <span class="px-3 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300 border border-primary-500/20">HTML/CSS</span>
-            <span class="px-3 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300 border border-primary-500/20">JavaScript</span>
-            <span class="px-3 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300 border border-primary-500/20">Vue.js</span>
-            <span class="px-3 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300 border border-primary-500/20">React</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300 border border-primary-500/20">Verilog</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300 border border-primary-500/20">SystemVerilog</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300 border border-primary-500/20">UVM</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-primary-500/10 text-primary-300 border border-primary-500/20">VCS</span>
           </div>
         </div>
 
-        <!-- 后端开发 -->
         <div class="rounded-xl bg-dark-800/50 border border-white/5 p-6 card-glow" data-aos="fade-up" data-aos-delay="100">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-12 h-12 rounded-xl bg-accent-500/10 flex items-center justify-center text-accent-400 text-xl"><i class="fas fa-server"></i></div>
-            <h3 class="text-lg font-semibold text-white">后端开发</h3>
+            <div class="w-12 h-12 rounded-xl bg-accent-500/10 flex items-center justify-center text-accent-400 text-xl"><i class="fas fa-code"></i></div>
+            <h3 class="text-lg font-semibold text-white">编程语言</h3>
           </div>
           <div class="flex flex-wrap gap-2">
             <span class="px-3 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300 border border-accent-500/20">Python</span>
-            <span class="px-3 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300 border border-accent-500/20">Node.js</span>
-            <span class="px-3 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300 border border-accent-500/20">Java</span>
-            <span class="px-3 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300 border border-accent-500/20">Go</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300 border border-accent-500/20">C/C++</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300 border border-accent-500/20">Tcl</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-accent-500/10 text-accent-300 border border-accent-500/20">Shell</span>
           </div>
         </div>
 
-        <!-- 工具 & DevOps -->
         <div class="rounded-xl bg-dark-800/50 border border-white/5 p-6 card-glow" data-aos="fade-up" data-aos-delay="200">
           <div class="flex items-center gap-3 mb-4">
             <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xl"><i class="fas fa-tools"></i></div>
-            <h3 class="text-lg font-semibold text-white">工具 & DevOps</h3>
+            <h3 class="text-lg font-semibold text-white">工具 & EDA</h3>
           </div>
           <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Vivado</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Quartus</span>
             <span class="px-3 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Git</span>
-            <span class="px-3 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Docker</span>
             <span class="px-3 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Linux</span>
-            <span class="px-3 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">CI/CD</span>
           </div>
         </div>
       </div>
@@ -337,69 +402,54 @@
   </section>
 
   <!-- ========== 项目作品集 ========== -->
-  <section id="projects" class="py-24 px-6 bg-dark-900/50">
+  <section id="projects" class="py-20 md:py-24 px-4 md:px-6 bg-dark-900/50">
     <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16" data-aos="fade-up">
+      <div class="text-center mb-12 md:mb-16" data-aos="fade-up">
         <span class="text-sm font-medium text-accent-400 tracking-widest uppercase">PROJECTS</span>
         <h2 class="text-3xl md:text-4xl font-bold mt-2 text-white">项目作品</h2>
         <div class="w-16 h-1 bg-gradient-to-r from-accent-500 to-primary-500 mx-auto mt-4 rounded-full"></div>
       </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- 项目 1 -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <div class="rounded-xl bg-dark-800/50 border border-white/5 overflow-hidden card-glow group" data-aos="fade-up" data-aos-delay="0">
           <div class="h-48 bg-gradient-to-br from-primary-500/20 to-accent-500/20 flex items-center justify-center relative overflow-hidden">
-            <i class="fas fa-image text-4xl text-white/20 group-hover:scale-110 transition-transform duration-500"></i>
+            <i class="fas fa-microchip text-4xl text-white/20 group-hover:scale-110 transition-transform duration-500"></i>
           </div>
           <div class="p-6">
             <div class="flex items-center gap-2 mb-3">
-              <span class="px-2 py-0.5 text-xs rounded-full bg-primary-500/10 text-primary-300">Vue.js</span>
-              <span class="px-2 py-0.5 text-xs rounded-full bg-accent-500/10 text-accent-300">Tailwind</span>
+              <span class="px-2 py-0.5 text-xs rounded-full bg-primary-500/10 text-primary-300">SystemVerilog</span>
+              <span class="px-2 py-0.5 text-xs rounded-full bg-accent-500/10 text-accent-300">UVM</span>
             </div>
-            <h3 class="text-lg font-semibold text-white mb-2">项目名称示例</h3>
-            <p class="text-sm text-gray-400 leading-relaxed">{{项目的详细描述，说明解决了什么问题，用了什么技术栈，实现了什么功能。}}</p>
-            <div class="flex gap-3 mt-4 pt-4 border-t border-white/5">
-              <a href="#" class="text-sm text-primary-400 hover:text-primary-300 transition-colors flex items-center gap-1"><i class="fab fa-github"></i> 代码</a>
-              <a href="#" class="text-sm text-accent-400 hover:text-accent-300 transition-colors flex items-center gap-1"><i class="fas fa-external-link-alt"></i> 演示</a>
-            </div>
+            <h3 class="text-lg font-semibold text-white mb-2">UVM验证环境搭建</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">基于UVM方法学搭建完整的模块级验证环境，包含driver、monitor、scoreboard等组件。</p>
           </div>
         </div>
 
-        <!-- 项目 2 -->
         <div class="rounded-xl bg-dark-800/50 border border-white/5 overflow-hidden card-glow group" data-aos="fade-up" data-aos-delay="100">
           <div class="h-48 bg-gradient-to-br from-accent-500/20 to-primary-500/20 flex items-center justify-center relative overflow-hidden">
-            <i class="fas fa-image text-4xl text-white/20 group-hover:scale-110 transition-transform duration-500"></i>
+            <i class="fas fa-project-diagram text-4xl text-white/20 group-hover:scale-110 transition-transform duration-500"></i>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="px-2 py-0.5 text-xs rounded-full bg-primary-500/10 text-primary-300">Verilog</span>
+              <span class="px-2 py-0.5 text-xs rounded-full bg-accent-500/10 text-accent-300">FPGA</span>
+            </div>
+            <h3 class="text-lg font-semibold text-white mb-2">RISC-V处理器设计</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">从零设计一个简单的RISC-V处理器内核，包含流水线、 hazard检测和转发单元。</p>
+          </div>
+        </div>
+
+        <div class="rounded-xl bg-dark-800/50 border border-white/5 overflow-hidden card-glow group" data-aos="fade-up" data-aos-delay="200">
+          <div class="h-48 bg-gradient-to-br from-primary-500/20 to-emerald-500/20 flex items-center justify-center relative overflow-hidden">
+            <i class="fas fa-chart-line text-4xl text-white/20 group-hover:scale-110 transition-transform duration-500"></i>
           </div>
           <div class="p-6">
             <div class="flex items-center gap-2 mb-3">
               <span class="px-2 py-0.5 text-xs rounded-full bg-primary-500/10 text-primary-300">Python</span>
-              <span class="px-2 py-0.5 text-xs rounded-full bg-accent-500/10 text-accent-300">AI/ML</span>
+              <span class="px-2 py-0.5 text-xs rounded-full bg-accent-500/10 text-accent-300">量化</span>
             </div>
-            <h3 class="text-lg font-semibold text-white mb-2">另一个项目</h3>
-            <p class="text-sm text-gray-400 leading-relaxed">{{在这里填写第二个项目的描述信息。}}</p>
-            <div class="flex gap-3 mt-4 pt-4 border-t border-white/5">
-              <a href="#" class="text-sm text-primary-400 hover:text-primary-300 transition-colors flex items-center gap-1"><i class="fab fa-github"></i> 代码</a>
-              <a href="#" class="text-sm text-accent-400 hover:text-accent-300 transition-colors flex items-center gap-1"><i class="fas fa-external-link-alt"></i> 演示</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 项目 3 -->
-        <div class="rounded-xl bg-dark-800/50 border border-white/5 overflow-hidden card-glow group" data-aos="fade-up" data-aos-delay="200">
-          <div class="h-48 bg-gradient-to-br from-primary-500/20 to-emerald-500/20 flex items-center justify-center relative overflow-hidden">
-            <i class="fas fa-image text-4xl text-white/20 group-hover:scale-110 transition-transform duration-500"></i>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center gap-2 mb-3">
-              <span class="px-2 py-0.5 text-xs rounded-full bg-primary-500/10 text-primary-300">Node.js</span>
-              <span class="px-2 py-0.5 text-xs rounded-full bg-accent-500/10 text-accent-300">MongoDB</span>
-            </div>
-            <h3 class="text-lg font-semibold text-white mb-2">第三个项目</h3>
-            <p class="text-sm text-gray-400 leading-relaxed">{{在这里填写第三个项目的描述信息。}}</p>
-            <div class="flex gap-3 mt-4 pt-4 border-t border-white/5">
-              <a href="#" class="text-sm text-primary-400 hover:text-primary-300 transition-colors flex items-center gap-1"><i class="fab fa-github"></i> 代码</a>
-              <a href="#" class="text-sm text-accent-400 hover:text-accent-300 transition-colors flex items-center gap-1"><i class="fas fa-external-link-alt"></i> 演示</a>
-            </div>
+            <h3 class="text-lg font-semibold text-white mb-2">量化交易分析系统</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">基于Python的股票技术分析与回测系统，支持多因子策略和可视化报告生成。</p>
           </div>
         </div>
       </div>
@@ -407,119 +457,326 @@
   </section>
 
   <!-- ========== 联系方式 ========== -->
-  <section id="contact" class="py-24 px-6">
+  <section id="contact" class="py-20 md:py-24 px-4 md:px-6">
     <div class="max-w-3xl mx-auto">
-      <div class="text-center mb-16" data-aos="fade-up">
+      <div class="text-center mb-12 md:mb-16" data-aos="fade-up">
         <span class="text-sm font-medium text-primary-400 tracking-widest uppercase">CONTACT</span>
         <h2 class="text-3xl md:text-4xl font-bold mt-2 text-white">联系我</h2>
         <div class="w-16 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto mt-4 rounded-full"></div>
-        <p class="text-gray-400 mt-6">{{任何合作意向或只是想打个招呼？欢迎通过各种方式联系我！}}</p>
+        <p class="text-gray-400 mt-6">欢迎通过以下方式联系我</p>
       </div>
 
-      <div class="grid sm:grid-cols-2 gap-6 mb-12" data-aos="fade-up" data-aos-delay="200">
-        <a href="mailto:{{your@email.com}}" class="flex items-center gap-4 p-6 rounded-xl bg-dark-800/50 border border-white/5 card-glow group">
+      <div class="grid sm:grid-cols-2 gap-4 md:gap-6 mb-12" data-aos="fade-up" data-aos-delay="200">
+        <a href="mailto:huxinchuang@example.com" class="flex items-center gap-4 p-6 rounded-xl bg-dark-800/50 border border-white/5 card-glow group">
           <div class="w-14 h-14 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-400 text-xl group-hover:bg-primary-500/20 transition-colors"><i class="fas fa-envelope"></i></div>
-          <div><p class="text-xs text-gray-500 uppercase">邮件</p><p class="text-gray-200 font-medium">{{your@email.com}}</p></div>
+          <div><p class="text-xs text-gray-500 uppercase">邮件</p><p class="text-gray-200 font-medium text-sm">huxinchuang@example.com</p></div>
         </a>
         <a href="#" class="flex items-center gap-4 p-6 rounded-xl bg-dark-800/50 border border-white/5 card-glow group">
           <div class="w-14 h-14 rounded-xl bg-accent-500/10 flex items-center justify-center text-accent-400 text-xl group-hover:bg-accent-500/20 transition-colors"><i class="fas fa-map-marker-alt"></i></div>
-          <div><p class="text-xs text-gray-500 uppercase">位置</p><p class="text-gray-200 font-medium">{{城市, 国家}}</p></div>
+          <div><p class="text-xs text-gray-500 uppercase">位置</p><p class="text-gray-200 font-medium">中国</p></div>
         </a>
       </div>
 
-      <div class="flex justify-center gap-6" data-aos="fade-up" data-aos-delay="400">
-        <a href="{{GitHub链接}}" target="_blank" class="w-12 h-12 rounded-xl bg-dark-800/50 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary-400 hover:text-primary-400 transition-all card-glow"><i class="fab fa-github text-xl"></i></a>
-        <a href="{{LinkedIn链接}}" target="_blank" class="w-12 h-12 rounded-xl bg-dark-800/50 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary-400 hover:text-primary-400 transition-all card-glow"><i class="fab fa-linkedin-in text-xl"></i></a>
-        <a href="{{Twitter链接}}" target="_blank" class="w-12 h-12 rounded-xl bg-dark-800/50 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary-400 hover:text-primary-400 transition-all card-glow"><i class="fab fa-twitter text-xl"></i></a>
-        <a href="{{博客链接}}" target="_blank" class="w-12 h-12 rounded-xl bg-dark-800/50 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary-400 hover:text-primary-400 transition-all card-glow"><i class="fas fa-blog text-xl"></i></a>
-        <a href="{{微信链接}}" target="_blank" class="w-12 h-12 rounded-xl bg-dark-800/50 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary-400 hover:text-primary-400 transition-all card-glow"><i class="fab fa-weixin text-xl"></i></a>
+      <div class="flex justify-center gap-4 md:gap-6" data-aos="fade-up" data-aos-delay="400">
+        <a href="#" target="_blank" class="w-12 h-12 rounded-xl bg-dark-800/50 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary-400 hover:text-primary-400 transition-all card-glow"><i class="fab fa-github text-xl"></i></a>
+        <a href="#" target="_blank" class="w-12 h-12 rounded-xl bg-dark-800/50 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary-400 hover:text-primary-400 transition-all card-glow"><i class="fab fa-linkedin-in text-xl"></i></a>
+        <a href="#" target="_blank" class="w-12 h-12 rounded-xl bg-dark-800/50 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary-400 hover:text-primary-400 transition-all card-glow"><i class="fab fa-twitter text-xl"></i></a>
+        <a href="#" target="_blank" class="w-12 h-12 rounded-xl bg-dark-800/50 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary-400 hover:text-primary-400 transition-all card-glow"><i class="fas fa-blog text-xl"></i></a>
       </div>
     </div>
   </section>
 
   <!-- ========== 页脚 ========== -->
   <footer class="border-t border-white/5 py-8 text-center">
-    <p class="text-sm text-gray-500">&copy; <span id="year"></span> {{你的名字}} · 使用 <span class="text-primary-400">&#9829;</span> 构建</p>
+    <p class="text-sm text-gray-500">&copy; <span id="year"></span> 龙港内报 · 内部报告平台</p>
   </footer>
 
   <!-- ========== JavaScript ========== -->
   <script>
-    // 初始化 AOS 动画
-    AOS.init({ duration: 600, once: true, offset: 50 });
+    // ===== 报告数据配置 =====
+    // 在此数组中添加新报告即可自动展示在首页
+    const reports = [
+      {
+        file: 'complete_report.md',
+        title: 'Trading Analysis Report: 002050.SZ',
+        desc: '三花智控（002050.SZ）全面交易分析报告，包含分析师团队报告、多时间框架技术分析与综合交易建议。',
+        date: '2026-07-13',
+        category: '交易分析',
+        icon: 'fa-chart-line',
+        color: 'accent'
+      },
+      {
+        file: 'README.md',
+        title: '数字IC设计工程师职业发展全套方案',
+        desc: '专为香港大学集成电路学院学生设计的完整职业发展规划，涵盖从入学前准备到毕业求职的全过程。',
+        date: '2026-04',
+        category: '职业规划',
+        icon: 'fa-microchip',
+        color: 'primary'
+      },
+      {
+        file: '数字IC设计工程师职业发展总体规划.md',
+        title: '数字IC设计工程师职业发展总体规划',
+        desc: '针对已有基础的IC设计工程师，涵盖2026年4月至2027年9月的系统性学习与实践规划。',
+        date: '2026-04',
+        category: '职业规划',
+        icon: 'fa-route',
+        color: 'primary'
+      },
+      {
+        file: '月度学习计划表（2026年4月-8月）.md',
+        title: '月度学习计划表（2026年4月-8月）',
+        desc: '5个月详细学习计划，每周约20小时，巩固数字IC设计基础并掌握SystemVerilog与UVM验证方法学。',
+        date: '2026-04',
+        category: '学习计划',
+        icon: 'fa-calendar-alt',
+        color: 'emerald'
+      },
+      {
+        file: '学习资源与工具列表.md',
+        title: '学习资源与工具列表',
+        desc: '数字IC设计学习资源汇总，包含书籍、在线课程、开发工具、开源项目与社区推荐。',
+        date: '2026-04',
+        category: '参考资料',
+        icon: 'fa-book',
+        color: 'emerald'
+      },
+      {
+        file: '推荐项目清单与规格.md',
+        title: '推荐项目清单与规格',
+        desc: '从简单到复杂的数字IC设计项目清单，涵盖RTL设计、验证、FPGA原型验证等环节。',
+        date: '2026-04',
+        category: '项目清单',
+        icon: 'fa-list-check',
+        color: 'primary'
+      }
+    ];
 
-    // 动态年份
-    document.getElementById('year').textContent = new Date().getFullYear();
+    const colorMap = {
+      primary: { bg: 'bg-primary-500/10', text: 'text-primary-300', border: 'border-primary-500/20', iconBg: 'bg-primary-500/10', iconText: 'text-primary-400' },
+      accent: { bg: 'bg-accent-500/10', text: 'text-accent-300', border: 'border-accent-500/20', iconBg: 'bg-accent-500/10', iconText: 'text-accent-400' },
+      emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-300', border: 'border-emerald-500/20', iconBg: 'bg-emerald-500/10', iconText: 'text-emerald-400' }
+    };
 
-    // 移动端菜单
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    menuToggle.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-    document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+    // ===== 渲染报告卡片 =====
+    function renderReports() {
+      const grid = document.getElementById('reports-grid');
+      const loading = document.getElementById('reports-loading');
 
-    // 粒子背景
-    (function() {
-      const canvas = document.getElementById('particles-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      let particles = [];
-      let w, h;
-
-      function resize() { w = canvas.width = canvas.offsetWidth; h = canvas.height = canvas.offsetHeight; }
-      resize();
-      window.addEventListener('resize', resize);
-
-      class Particle {
-        constructor() { this.reset(); }
-        reset() {
-          this.x = Math.random() * w;
-          this.y = Math.random() * h;
-          this.vx = (Math.random() - 0.5) * 0.5;
-          this.vy = (Math.random() - 0.5) * 0.5;
-          this.size = Math.random() * 2 + 0.5;
-          this.alpha = Math.random() * 0.5 + 0.1;
-        }
-        update() {
-          this.x += this.vx; this.y += this.vy;
-          if (this.x < 0 || this.x > w) this.vx *= -1;
-          if (this.y < 0 || this.y > h) this.vy *= -1;
-        }
-        draw() {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(14, 165, 233, ${this.alpha})`;
-          ctx.fill();
-        }
+      if (reports.length === 0) {
+        loading.innerHTML = '<p class="text-gray-500">暂无报告</p>';
+        return;
       }
 
-      const count = Math.min(80, Math.floor((w * h) / 15000));
-      for (let i = 0; i < count; i++) particles.push(new Particle());
+      const html = reports.map((r, i) => {
+        const c = colorMap[r.color] || colorMap.primary;
+        return `
+          <article class="rounded-xl bg-dark-800/50 border border-white/5 overflow-hidden card-glow group cursor-pointer"
+                   data-aos="fade-up" data-aos-delay="${i * 80}"
+                   onclick="openReport('${r.file}', '${escapeHtml(r.title)}')">
+            <!-- 卡片顶部色条 -->
+            <div class="h-1 bg-gradient-to-r ${r.color === 'accent' ? 'from-accent-500 to-pink-500' : r.color === 'emerald' ? 'from-emerald-500 to-teal-500' : 'from-primary-500 to-accent-500'}"></div>
 
-      function connectParticles() {
-        for (let a = 0; a < particles.length; a++) {
-          for (let b = a + 1; b < particles.length; b++) {
-            const dx = particles[a].x - particles[b].x;
-            const dy = particles[a].y - particles[b].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 120) {
-              ctx.beginPath();
-              ctx.strokeStyle = `rgba(14, 165, 233, ${0.08 * (1 - dist / 120)})`;
-              ctx.lineWidth = 0.5;
-              ctx.moveTo(particles[a].x, particles[a].y);
-              ctx.lineTo(particles[b].x, particles[b].y);
-              ctx.stroke();
+            <div class="p-5 md:p-6">
+              <!-- 图标和分类 -->
+              <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 md:w-11 md:h-11 rounded-xl ${c.iconBg} flex items-center justify-center ${c.iconText}">
+                  <i class="fas ${r.icon} text-lg"></i>
+                </div>
+                <span class="px-2.5 py-1 text-xs rounded-full ${c.bg} ${c.text} ${c.border}">${r.category}</span>
+              </div>
+
+              <!-- 标题 -->
+              <h3 class="text-base md:text-lg font-semibold text-white mb-2 line-clamp-2 group-hover:text-primary-300 transition-colors">
+                ${escapeHtml(r.title)}
+              </h3>
+
+              <!-- 描述 -->
+              <p class="text-sm text-gray-400 leading-relaxed mb-4 line-clamp-2 md:line-clamp-3">
+                ${escapeHtml(r.desc)}
+              </p>
+
+              <!-- 底部信息 -->
+              <div class="flex items-center justify-between pt-3 border-t border-white/5">
+                <span class="text-xs text-gray-500 flex items-center gap-1.5">
+                  <i class="fas fa-calendar text-[10px]"></i>${r.date}
+                </span>
+                <span class="text-xs text-primary-400 flex items-center gap-1 group-hover:gap-2 transition-all">
+                  阅读 <i class="fas fa-arrow-right text-[10px]"></i>
+                </span>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      grid.innerHTML = html;
+      loading.style.display = 'none';
+
+      // 重新初始化 AOS 以识别新元素
+      AOS.refresh();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ===== 文章阅读器 =====
+    let readerVisible = false;
+
+    async function openReport(filename, title) {
+      const reader = document.getElementById('article-reader');
+      const contentEl = document.getElementById('reader-content');
+      const loadingEl = document.getElementById('reader-loading');
+      const errorEl = document.getElementById('reader-error');
+      const titleEl = document.getElementById('reader-title');
+
+      // 显示阅读器
+      reader.classList.add('active');
+      readerVisible = true;
+      document.body.style.overflow = 'hidden';
+
+      // 重置状态
+      contentEl.innerHTML = '';
+      contentEl.classList.add('hidden');
+      errorEl.classList.add('hidden');
+      loadingEl.classList.remove('hidden');
+      titleEl.textContent = title;
+
+      // 滚动到顶部
+      reader.scrollTop = 0;
+
+      try {
+        const resp = await fetch(`files/${filename}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const md = await resp.text();
+
+        // 使用 marked 渲染
+        if (typeof marked !== 'undefined') {
+          marked.setOptions({ breaks: true, gfm: true });
+          contentEl.innerHTML = marked.parse(md);
+        } else {
+          // fallback: 纯文本展示
+          contentEl.innerHTML = `<pre style="white-space:pre-wrap;color:#94a3b8;line-height:1.8;">${escapeHtml(md)}</pre>`;
+        }
+
+        loadingEl.classList.add('hidden');
+        contentEl.classList.remove('hidden');
+      } catch (e) {
+        console.error('加载文章失败:', e);
+        loadingEl.classList.add('hidden');
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    function closeReader() {
+      const reader = document.getElementById('article-reader');
+      reader.classList.remove('active');
+      readerVisible = false;
+      document.body.style.overflow = '';
+    }
+
+    // 返回按钮
+    document.getElementById('reader-back').addEventListener('click', closeReader);
+
+    // 回到顶部按钮
+    document.getElementById('reader-top').addEventListener('click', () => {
+      document.getElementById('article-reader').scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ESC 关闭阅读器
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && readerVisible) {
+        closeReader();
+      }
+    });
+
+    // ===== 初始化 =====
+    document.addEventListener('DOMContentLoaded', () => {
+      // AOS 动画
+      AOS.init({ duration: 600, once: true, offset: 50 });
+
+      // 动态年份
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // 渲染报告列表
+      renderReports();
+
+      // 移动端菜单
+      const menuToggle = document.getElementById('menu-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      menuToggle.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+      document.querySelectorAll('.mobile-link').forEach(link =>
+        link.addEventListener('click', () => mobileMenu.classList.add('hidden'))
+      );
+
+      // 粒子背景
+      (function() {
+        const canvas = document.getElementById('particles-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let w, h;
+
+        function resize() { w = canvas.width = canvas.offsetWidth; h = canvas.height = canvas.offsetHeight; }
+        resize();
+        window.addEventListener('resize', resize);
+
+        class Particle {
+          constructor() { this.reset(); }
+          reset() {
+            this.x = Math.random() * w;
+            this.y = Math.random() * h;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.size = Math.random() * 2 + 0.5;
+            this.alpha = Math.random() * 0.5 + 0.1;
+          }
+          update() {
+            this.x += this.vx; this.y += this.vy;
+            if (this.x < 0 || this.x > w) this.vx *= -1;
+            if (this.y < 0 || this.y > h) this.vy *= -1;
+          }
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(14, 165, 233, ${this.alpha})`;
+            ctx.fill();
+          }
+        }
+
+        const count = Math.min(80, Math.floor((w * h) / 15000));
+        for (let i = 0; i < count; i++) particles.push(new Particle());
+
+        function connectParticles() {
+          for (let a = 0; a < particles.length; a++) {
+            for (let b = a + 1; b < particles.length; b++) {
+              const dx = particles[a].x - particles[b].x;
+              const dy = particles[a].y - particles[b].y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < 120) {
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(14, 165, 233, ${0.08 * (1 - dist / 120)})`;
+                ctx.lineWidth = 0.5;
+                ctx.moveTo(particles[a].x, particles[a].y);
+                ctx.lineTo(particles[b].x, particles[b].y);
+                ctx.stroke();
+              }
             }
           }
         }
-      }
 
-      function animate() {
-        ctx.clearRect(0, 0, w, h);
-        particles.forEach(p => { p.update(); p.draw(); });
-        connectParticles();
-        requestAnimationFrame(animate);
-      }
-      animate();
-    })();
+        function animate() {
+          ctx.clearRect(0, 0, w, h);
+          particles.forEach(p => { p.update(); p.draw(); });
+          connectParticles();
+          requestAnimationFrame(animate);
+        }
+        animate();
+      })();
+    });
   </script>
 </body>
 </html>
