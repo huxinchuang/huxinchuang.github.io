@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>A股行业板块原理研究报告（2026-08-13）</title>
+<style>
+:root{--bg:#0f1420;--card:#161d2e;--card2:#1b2438;--fg:#e8ecf4;--mut:#93a0b8;--acc:#4f8cff;--red:#ff5c5c;--green:#2ecc8f;--gold:#f5b942;--line:#26304a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.75;font-size:15px}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 20px 90px}
+header.hero{background:linear-gradient(135deg,#1a2440,#101a33 60%,#0f2a2a);border:1px solid var(--line);border-radius:16px;padding:34px 34px 26px;margin-bottom:26px}
+header.hero h1{margin:0 0 8px;font-size:27px;color:#fff}
+header.hero .sub{color:var(--gold);font-weight:600;margin-bottom:14px}
+header.hero .meta{color:var(--mut);font-size:13px}
+.badge{display:inline-block;background:#1e3a5f;color:#8ab6ff;border-radius:20px;padding:2px 12px;font-size:12px;margin:0 6px 6px 0}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 24px;margin:20px 0 28px}
+.toc h3{margin:0 0 10px;color:var(--gold);font-size:16px}
+.toc ul{list-style:none;margin:0;padding:0}
+.toc>ul>li{margin:6px 0;font-weight:600}
+.toc ul ul{font-weight:400;padding-left:18px;margin-top:4px}
+.toc a{color:var(--acc);text-decoration:none}
+.toc a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.45}
+h2{color:var(--gold);border-bottom:2px solid var(--line);padding-bottom:8px;margin-top:44px;font-size:21px}
+h3{color:#8ab6ff;margin-top:30px;font-size:17px}
+h4{color:#cdd9f5;font-size:15px}
+p{margin:10px 0}
+strong{color:#fff}
+code{background:#0d1424;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-family:Consolas,monospace;font-size:13px;color:#7ee0a3}
+pre.codeblock{background:#0d1424;border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;font-family:Consolas,monospace;font-size:13px;color:#c9d7f5;line-height:1.6}
+blockquote{border-left:4px solid var(--gold);background:var(--card);margin:14px 0;padding:10px 16px;border-radius:0 10px 10px 0;color:var(--mut)}
+blockquote strong{color:var(--gold)}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+ul,ol{padding-left:24px}
+li{margin:5px 0}
+.tblwrap{overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;background:var(--card)}
+th{background:var(--card2);color:var(--gold);text-align:left;padding:9px 12px;white-space:nowrap;border-bottom:2px solid var(--line)}
+td{padding:8px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody tr:nth-child(even){background:var(--card2)}
+tbody tr:hover{background:#223056}
+tr>td:first-child{font-weight:600;color:#fff}
+/* 红涨绿跌（A股习惯）*/ td:nth-child(2), td:last-child { color: var(--fg) }</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>📊 A股行业板块原理研究报告</h1>
+  <div class="sub">板块分类、运行原理与相互关系的系统梳理</div>
+  <div>
+    <span class="badge">数据时间 2026-08-13 13:44（盘中快照）</span>
+    <span class="badge">来源 东方财富公开行情接口</span>
+    <span class="badge">学习研究用途</span>
+  </div>
+  <div class="meta">配套 Markdown 源文件：行业板块原理研究报告.md ｜ 行情数据脚本位于 data/ 目录</div>
+</header>
+<div class="toc"><h3>📑 目录</h3><ul><li><a href="#sec3">摘要（TL;DR）</a></li>
+<li><a href="#sec4">第一章 板块体系：分类的原理</a><ul><li><a href="#sec5">1.1 什么是"板块"？</a></li><li><a href="#sec6">1.2 主流分类体系</a></li><li><a href="#sec7">1.3 行业板块 vs 概念板块：为什么概念经常"领涨"</a></li><li><a href="#sec8">1.4 产业链视角：上中下游的"位置决定性格"</a></li></ul></li>
+<li><a href="#sec9">第二章 板块定价的底层原理</a><ul><li><a href="#sec10">2.1 板块涨跌 = 盈利预期 × 估值水位 × 资金偏好</a></li><li><a href="#sec11">2.2 美林时钟：经济周期决定板块轮动的大剧本</a></li><li><a href="#sec12">2.3 库存周期（基钦周期）：行业景气的 40 个月节拍</a></li><li><a href="#sec13">2.4 风格轮动：价值 / 成长 / 大小盘</a></li><li><a href="#sec14">2.5 A股的特殊性：政策市、抱团与资金面</a></li></ul></li>
+<li><a href="#sec15">第三章 六大集群：各板块的原理与相互关系（核心章）</a><ul><li><a href="#sec16">3.0 集群全景图</a></li><li><a href="#sec17">3.1 ① 上游资源与周期品：价格的奴隶</a></li><li><a href="#sec18">3.2 ② 中游制造：订单与价差的夹心层</a></li><li><a href="#sec19">3.3 ③ 下游消费：确定性溢价与"超跌修复"</a></li><li><a href="#sec20">3.4 ④ 科技成长：渗透率与创新周期</a></li><li><a href="#sec21">3.5 ⑤ 金融地产：信用与杠杆的放大器</a></li><li><a href="#sec22">3.6 ⑥ 防御与红利：避险的避风港</a></li></ul></li>
+<li><a href="#sec23">第四章 板块间的传导与互动：关系的原理</a><ul><li><a href="#sec24">4.1 产业链价格传导链（"成本推"与"需求拉"）</a></li><li><a href="#sec25">4.2 资金跷跷板：存量博弈下的"你涨我跌"</a></li><li><a href="#sec26">4.3 宏观变量的传导地图（自上而下的主干道）</a></li><li><a href="#sec27">4.4 先行指标与验证指标（"看门道"的工具箱）</a></li></ul></li>
+<li><a href="#sec28">第五章 实战案例：用 2026-08-13 实时数据拆解板块轮动</a><ul><li><a href="#sec29">5.1 大盘概览（13:44 盘中快照）</a></li><li><a href="#sec30">5.2 今日强势方向一：医药生物（全链爆发）</a></li><li><a href="#sec31">5.3 今日强势方向二：通信（AI 算力超跌反弹）</a></li><li><a href="#sec32">5.4 今日弱势方向：有色金属（获利兑现）</a></li><li><a href="#sec33">5.5 年初至今轮动全景（谁在领跑，为什么）</a></li><li><a href="#sec34">5.6 市场背景：2026 年 8 月的"再平衡"行情（机构视角）</a></li></ul></li>
+<li><a href="#sec35">第六章 学习与跟踪框架</a><ul><li><a href="#sec36">6.1 自上而下的三层框架</a></li><li><a href="#sec37">6.2 中观景气跟踪清单（每个板块盯 2-3 个指标即可）</a></li><li><a href="#sec38">6.3 每日/每周观察清单（数据源）</a></li><li><a href="#sec39">6.4 常见误区（避坑）</a></li></ul></li>
+<li><a href="#sec40">附录</a><ul><li><a href="#sec41">附录 A：数据说明与免责声明</a></li><li><a href="#sec42">附录 B：术语表</a></li><li><a href="#sec43">附录 C：今日全数据速查（2026-08-13 13:44 快照）</a></li></ul></li></ul></div>
+<h4 id="sec2">—— 板块分类、运行原理与相互关系的系统梳理（附 2026-08-13 实时行情实证）</h4>
+<blockquote><strong>数据说明</strong>：本文行情数据抓取自东方财富公开行情接口，快照时间 2026-08-13 13:44（盘中）。市场背景信息来自公开财经报道（2026年8月12日前后）。本报告用于<strong>学习与研究</strong>，不构成任何投资建议。</blockquote>
+<hr/>
+<h2 id="sec3">摘要（TL;DR）</h2>
+<ol>
+<li><strong>板块是"股票分组"</strong>，分组方式不同 → 板块含义不同：行业板块按<strong>产业链供给端</strong>分类（申万 31 个一级行业），概念板块按<strong>需求/主题/情绪</strong>分类（创新药、AI、低空经济…）。</li>
+<li><strong>板块涨跌的本质是"盈利预期 + 估值水位 + 资金偏好"三者共振</strong>，其中经济周期（美林时钟、库存周期）决定基本面主线，流动性决定估值弹性，事件与政策决定催化时点。</li>
+<li><strong>板块之间既有"共生"（产业链上下游价格传导）也有"对立"（存量资金下的跷跷板轮动）</strong>，理解关系比理解单个板块更重要。</li>
+<li><strong>2026 年 8 月的 A 股正处于"再平衡"行情</strong>：上半年科技（电子、通信）独领风骚，7 月后资金向医药、资源、消费扩散；实时数据显示今日（8/13）医药全线领涨（医疗研发外包 +6.7%）、通信主力净流入 58 亿回流、有色金属主力净流出 115 亿兑现——同一时间三种不同逻辑在轮动。</li>
+<li>学习板块的关键不是背名单，而是掌握<strong>"宏观变量 → 行业景气 → 个股盈利"的传导链</strong>和<strong>"情绪 + 资金 + 估值"的三维定位法</strong>。</li></ol>
+<hr/>
+<h2 id="sec4">第一章 板块体系：分类的原理</h2>
+<h3 id="sec5">1.1 什么是"板块"？</h3>
+<p>板块（Sector / Theme）就是把数百上千只股票按照某种共同属性<strong>分组</strong>。分组的属性不同，板块的含义就完全不同：</p>
+<div class="tblwrap"><table><thead><tr><th>分组属性</th><th>板块类型</th><th>例子</th><th>回答的问题</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>行业（供给端）</th><th>行业板块</th><th>医药生物、电子、银行</th><th>"这家公司是做什么的？"</th></tr></thead><tbody>
+<tr><td>主题/需求端</td><td>概念板块</td><td>创新药、AI算力、低空经济</td><td>"这家公司蹭上了什么风口？"</td></tr>
+<tr><td>地域</td><td>地域板块</td><td>上海自贸区、雄安新区</td><td>"这家公司在哪？"</td></tr>
+<tr><td>风格</td><td>风格指数</td><td>大盘价值、小盘成长</td><td>"这家公司什么体量和气质？"</td></tr>
+<tr><td>制度/交易属性</td><td>交易类板块</td><td>ST、次新股、昨日连板</td><td>"这只股票什么交易状态？"</td></tr>
+</tbody></table></div>
+<blockquote>一个真实案例：药明康德属于<strong>医药生物</strong>（行业），同时也属于<strong>CRO / 创新药 / 减肥药 / 基因测序</strong>等多个概念板块。行业板块反映它的"出身"，概念板块反映它的"故事"。</blockquote>
+<h3 id="sec6">1.2 主流分类体系</h3>
+<div class="tblwrap"><table><thead><tr><th>体系</th><th>层级</th><th>特点</th><th>使用者</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th><strong>申万行业分类</strong>（2021 版）</th><th>一级 31 个 → 二级 134 个 → 三级 346 个</th><th>A股研究事实标准，产业链逻辑强，机构最爱</th><th>券商研究所、公募基金</th></tr></thead><tbody>
+<tr><td><strong>证监会行业分类</strong></td><td>门类 19 个</td><td>上市公司法定义务分类，偏粗</td><td>监管、统计</td></tr>
+<tr><td><strong>中信行业分类</strong></td><td>一级 30 个</td><td>与申万类似，口径略有差异</td><td>中信系机构</td></tr>
+<tr><td><strong>东财/同花顺行业</strong></td><td>自研</td><td>与申万高度重合，接口好取数</td><td>散户、量化</td></tr>
+</tbody></table></div>
+<p><strong>申万一级 31 个行业</strong>（本文以它为主线）：</p>
+<pre class="codeblock">农林牧渔  基础化工  钢铁  有色金属  电子  家用电器  食品饮料
+纺织服饰  轻工制造  医药生物  公用事业  交通运输  房地产  商贸零售
+社会服务  综合  建筑材料  建筑装饰  电力设备  国防军工  计算机
+传媒  通信  银行  非银金融  汽车  机械设备  煤炭  石油石化
+环保  美容护理</pre>
+<p><strong>记忆方法（产业集群分组）</strong>：31 个行业可以压成 6 大集群（详见第三章）——上游资源、中游制造、下游消费、科技成长、金融地产、防御红利。<strong>先把集群关系记住，再往里面填行业</strong>，比死记 31 个名字高效得多。</p>
+<h3 id="sec7">1.3 行业板块 vs 概念板块：为什么概念经常"领涨"</h3>
+<p>今天（8/13）盘中数据显示：涨幅榜前排几乎全是医药细分行业，但概念板块里 <code>CRO +5.86%</code>、<code>创新药 +3.13%</code> 涨幅比行业板块的 <code>医药生物 +2.62%</code> 更夸张。原因：</p>
+<ul>
+<li><strong>行业板块</strong> = 公司主营业务收入来源，口径刚性，一个公司只能归一个行业（申万三级）；</li>
+<li><strong>概念板块</strong> = 只要是"沾边"的公司都能进来，口径弹性，可以同时属于几十个概念。</li></ul>
+<p>所以<strong>概念的弹性天然大于行业</strong>：概念负责"讲故事吸引情绪资金"，行业负责"讲业绩验证基本面"。情绪行情看概念榜，趋势行情看行业榜。</p>
+<blockquote>注意识别"伪板块"：东财概念榜里 <code>历史新高 +20%</code>、<code>昨日连板 +6.5%</code> 这类是<strong>情绪统计指数</strong>而非投资板块，它们反映的是市场赚钱效应（涨停家数、连板高度），是<strong>情绪温度计</strong>，不能当行业研究。</blockquote>
+<h3 id="sec8">1.4 产业链视角：上中下游的"位置决定性格"</h3>
+<p>把 31 个一级行业按产业链位置排开，每个位置的行业有完全不同的经济性格：</p>
+<pre class="codeblock">原材料/能源            中间品/设备            终端产品/服务
+─────────────────────────────────────────────────────────────
+煤炭 石油石化          基础化工(中间品)        食品饮料 医药生物
+有色金属 钢铁          电力设备(电池/光伏)     家用电器 汽车
+农林牧渔(养殖)         机械设备 电子元件       纺织服饰 商贸零售
+                      通信设备 建材           房地产 社会服务
+                      军工                   计算机(软件服务)</pre>
+<div class="tblwrap"><table><thead><tr><th>位置</th><th>性格</th><th>盈利驱动</th><th>典型特征</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th><strong>上游</strong></th><th>强周期</th><th>商品价格 × 产量</th><th>盈利弹性最大、股价跟随 PPI/商品期货、估值便宜但波动大</th></tr></thead><tbody>
+<tr><td><strong>中游</strong></td><td>加工/制造</td><td>需求 × 价差（产品价-原料价）</td><td>两头受气：上游涨价挤压利润，下游需求决定销量</td></tr>
+<tr><td><strong>下游</strong></td><td>消费/服务</td><td>量 × 价 × 品牌溢价</td><td>需求稳定、现金流好、抗周期，但缺乏爆发力</td></tr>
+</tbody></table></div>
+<blockquote><strong>一句话原理</strong>：上游看"价"，中游看"差"（价差），下游看"量价与品牌"。经济上行期利润向上游集中（价涨），经济平稳期利润向中下游转移（成本下降+需求稳定）。</blockquote>
+<hr/>
+<h2 id="sec9">第二章 板块定价的底层原理</h2>
+<h3 id="sec10">2.1 板块涨跌 = 盈利预期 × 估值水位 × 资金偏好</h3>
+<p>任何板块的涨跌都逃不出这个三元框架：</p>
+<pre class="codeblock">板块股价涨幅 ≈ 盈利增速预期(EPS)  ×  估值变化(PE)  ×  资金进出(量)
+               基本面驱动            估值驱动         交易驱动</pre>
+<div class="tblwrap"><table><thead><tr><th>驱动类型</th><th>来源</th><th>典型板块事件</th><th>持续性</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>盈利驱动</th><th>行业景气：量、价、订单、利润</th><th>2021 煤炭涨价、2024-26 AI 光模块业绩兑现</th><th>数月~数年</th></tr></thead><tbody>
+<tr><td>估值驱动</td><td>流动性（利率）、风险偏好</td><td>降息利好成长股拔估值；主题炒作</td><td>数周~数月</td></tr>
+<tr><td>交易驱动</td><td>资金博弈、情绪、抱团/踩踏</td><td>龙虎榜游资、公募调仓、量化拥挤</td><td>数日~数周</td></tr>
+</tbody></table></div>
+<p><strong>为什么同样的消息对不同板块影响完全不同？</strong> 因为每个板块对"利率、通胀、经济增速、风险偏好"的敏感度不同（β 不同）：</p>
+<div class="tblwrap"><table><thead><tr><th>宏观变量</th><th>最受益</th><th>逻辑</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>利率下行</th><th>成长（电子/计算机/医药）</th><th>未来现金流贴现，久期长，估值弹性大</th></tr></thead><tbody>
+<tr><td>利率下行</td><td>高股息（公用/银行/煤炭）</td><td>类债券资产，股息率相对吸引力上升</td></tr>
+<tr><td>PPI/商品价格上行</td><td>上游资源（有色/煤炭/石化/化工）</td><td>产品涨价直接增厚利润</td></tr>
+<tr><td>社融/信贷扩张</td><td>银行、地产链、基建链</td><td>信用创造→资产扩张→投资需求</td></tr>
+<tr><td>CPI 回升</td><td>消费（食饮/医药/零售）</td><td>需求回暖 + 提价能力</td></tr>
+<tr><td>出口/汇率</td><td>出口制造（家电/汽车/机械/纺服）</td><td>海外收入以美元计价，量升 + 汇兑收益</td></tr>
+<tr><td>风险偏好回升</td><td>TMT、军工、券商</td><td>高弹性、高想象力品种先涨</td></tr>
+</tbody></table></div>
+<h3 id="sec11">2.2 美林时钟：经济周期决定板块轮动的大剧本</h3>
+<p>美林投资时钟把"经济增长 × 通胀"组合成四个象限，每个象限有占优板块。<strong>板块轮动的主线剧本就是它</strong>：</p>
+<pre class="codeblock">                    经济增长 ↑
+        ┌─────────────────────────────┐
+        │  复苏期(金发女孩)            │  过热期(通胀抬头)
+        │  GDP↑ CPI↓                  │  GDP↑ CPI↑
+        │  占优：金融 周期成长          │  占优：资源 能源 材料
+        │  科技 可选消费               │  （大宗商品为王）
+        ├─────────────────────────────┤
+        │  衰退期(通缩担忧)            │  滞胀期(最难受)
+        │  GDP↓ CPI↓                  │  GDP↓ CPI↑
+        │  占优：债券 高股息 公用事业   │  占优：现金 医药 必选消费
+        │  防御板块 黄金               │  抗通胀资产
+        └─────────────────────────────┘
+                    经济增长 ↓</pre>
+<ul>
+<li><strong>复苏 → 过热</strong>：先炒金融（社融起来银行先受益）、再炒中游制造、最后资源品暴涨（过热期商品最凶）；</li>
+<li><strong>过热 → 滞胀</strong>：商品见顶回落，资金躲进医药、公用事业等防御品；</li>
+<li><strong>衰退 → 复苏</strong>：利率下行先利好高股息和债券，政策刺激后周期股率先反弹。</li></ul>
+<p><strong>A股 2026 年的对照</strong>：上半年 AI 硬件（科技成长）一枝独秀（电子 +86%、通信 +74%），7 月后资金转向煤炭、有色、石化（涨价链/周期）+ 医药、食品饮料（消费/超跌）——这正是从"单一成长过热"向"多点再平衡"的轮动，对应时钟的"过热→滞胀预期"区间特征（高股息+资源+防御同时走强，往往意味着市场对经济动能见顶有分歧）。</p>
+<h3 id="sec12">2.3 库存周期（基钦周期）：行业景气的 40 个月节拍</h3>
+<p>库存周期约 40 个月一轮，分四个阶段，<strong>每个阶段受益板块不同</strong>，是"美林时钟"的中观细化：</p>
+<div class="tblwrap"><table><thead><tr><th>阶段</th><th>特征</th><th>受益方向</th><th>逻辑</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>主动补库存</th><th>需求回暖、企业扩产补货</th><th>中游制造、上游资源、化工</th><th>量价齐升，景气向上</th></tr></thead><tbody>
+<tr><td>被动补库存</td><td>需求见顶、库存被动累积</td><td>消费、防御</td><td>周期品见顶回落，资金找确定性</td></tr>
+<tr><td>主动去库存</td><td>需求下滑、企业砍单去库</td><td>高股息、公用事业</td><td>盈利普遍承压，防御为王</td></tr>
+<tr><td>被动去库存</td><td>需求触底、库存被动消耗</td><td>成长股左侧、金融</td><td>最黑暗时刻，领先资金布局拐点</td></tr>
+</tbody></table></div>
+<p><strong>观察指标</strong>：PMI 新订单（需求）、工业企业产成品库存同比（库存位置）、PPI（价格）。三者合成即可定位当前处在库存周期哪一段。</p>
+<h3 id="sec13">2.4 风格轮动：价值 / 成长 / 大小盘</h3>
+<p>板块轮动还有一个"风格维度"，两两组合出四种风格，资金在风格间迁徙：</p>
+<div class="tblwrap"><table><thead><tr><th>风格</th><th>代表板块</th><th>占优环境</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>大盘价值</th><th>银行、保险、煤炭、公用、交运</th><th>利率下行、风险偏好低、震荡市</th></tr></thead><tbody>
+<tr><td>大盘成长</td><td>白酒、新能源龙头（成熟期）</td><td>经济企稳、机构增量资金入场</td></tr>
+<tr><td>小盘成长</td><td>半导体、军工、题材科技</td><td>流动性宽松、情绪活跃、赚钱效应强</td></tr>
+<tr><td>小盘价值</td><td>周期小票、低价股</td><td>供给收缩逻辑、资源涨价</td></tr>
+</tbody></table></div>
+<blockquote><strong>规律</strong>：风格轮动本质是"风险偏好钟摆"。情绪低点买红利（防御），情绪起来买小盘成长（进攻），机构增量资金进场才轮到大盘成长。2026 年上半年是典型"小盘/大盘成长"（AI），8 月转向"价值+超跌成长"（医药、红利、资源）再平衡。</blockquote>
+<h3 id="sec14">2.5 A股的特殊性：政策市、抱团与资金面</h3>
+<p>教科书理论之外，A股板块运行还有三个显著的本土特征：</p>
+<ol>
+<li><strong>政策驱动强</strong>：产业政策（补贴、集采、注册制、并购重组）可以直接改变一个板块的盈利预期。医药集采 vs 创新药出海、光伏供给侧出清、低空经济规划——政策是最大的"外生变量"。</li>
+<li><strong>机构抱团与瓦解</strong>：当某一景气逻辑被公募认可，增量申购持续流入 → 抱团板块估值透支 → 边际逻辑走弱后踩踏式瓦解（2021 白酒、2021-22 新能源、2025-26 AI 硬件均经历过）。<strong>抱团本质是"同向资金 + 同向逻辑"的正反馈，瓦解则反过来</strong>。</li>
+<li><strong>情绪与题材周期</strong>：连板高度、涨停家数、龙虎榜——游资情绪周期约 2-4 周，决定了题材股的"春夏秋冬"。今天概念榜的 <code>昨日连板 +6.5%</code>、<code>历史新高 +20%</code> 就是情绪温度的实时读数。</li></ol>
+<hr/>
+<h2 id="sec15">第三章 六大集群：各板块的原理与相互关系（核心章）</h2>
+<h3 id="sec16">3.0 集群全景图</h3>
+<pre class="codeblock">                     ┌─────────────────────────────────────┐
+                     │        六大板块集群（A股全图）        │
+                     └─────────────────────────────────────┘
+  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
+  │ ① 上游资源 │  │ ② 中游制造 │  │ ③ 下游消费 │  │ ④ 科技成长 │  │ ⑤ 金融地产 │  │ ⑥ 防御红利 │
+  │ 煤炭石化  │  │ 电力设备  │  │ 食品饮料  │  │ 电子     │  │ 银行     │  │ 公用事业  │
+  │ 有色钢铁  │→ │ 机械军工  │→ │ 医药家电  │  │ 计算机   │  │ 非银     │  │ 交通运输  │
+  │ 基础化工  │  │ 建材建筑  │  │ 汽车零售  │  │ 通信传媒  │  │ 房地产   │  │ 环保      │
+  │ 农林牧渔  │  │          │  │ 社服纺服  │  │          │  │          │  │ (银行煤炭)│
+  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └──────────┘
+    价格驱动        订单驱动        消费驱动       创新驱动       信用驱动      避险驱动
+    看PPI/商品      看PMI/投资      看CPI/社零     看渗透率/AI    看社融/利率   看股息率</pre>
+<p><strong>集群间的关系口诀</strong>：①供原料 → ②做产品 → ③卖终端；④提供效率工具（改造①②③）；⑤提供资金杠杆（放大①②③）；⑥是避风港（风险高时资金涌入）。</p>
+<h3 id="sec17">3.1 ① 上游资源与周期品：价格的奴隶</h3>
+<p><strong>成员</strong>：煤炭、石油石化、有色金属（铜铝黄金锂钨稀土）、钢铁、基础化工、农林牧渔（养殖部分）</p>
+<p><strong>核心原理</strong>：</p>
+<ul>
+<li>周期品的命门是<strong>供需缺口 → 价格 → 利润</strong>。供给刚性（矿山/油田/猪产能建设周期 2-5 年），需求由宏观（地产/基建/制造/消费）决定，两者错配形成 3-5 年大周期。</li>
+<li>股价领先商品价格见顶/见底约 1-2 个季度（市场炒"预期"），所以<strong>"商品还在涨但股价不涨"往往是周期顶部信号</strong>。</li>
+<li>资源股自带"通胀对冲"属性：CPI/PPI 上行期是赢家，滞胀期是唯一能涨的进攻品。</li></ul>
+<p><strong>今天（8/13）的实证</strong>：有色金属全线下挫——工业金属 -1.97%（主力净流出 55.7 亿）、贵金属 -4.05%（-24 亿）、黄金 -3.78%（-17.5 亿）。而年初至今钨 +111%、玻纤 +101% 说明上半年资源涨价链是主线之一；7 月以来煤炭 +18%（YTD）说明高股息逻辑仍然占优。<strong>今日回落=获利兑现+资金转场医药</strong>，是典型的轮动而非逻辑破坏——判断依据要看商品现货价与库存是否同步走弱。</p>
+<p><strong>内部关系（子行业联动）</strong>：</p>
+<ul>
+<li>铜→铝→铅锌→小金属：同受全球制造业周期驱动，齐涨齐跌（今天全绿）；</li>
+<li>黄金 vs 工业金属：金价受实际利率驱动（避险），与工业金属（需求驱动）逻辑不同，可能背离；</li>
+<li>煤炭 vs 电力（下游）：煤价涨 → 火电利润被挤压，<strong>此消彼长</strong>；</li>
+<li>石油石化：油价决定全链利润分配——油价涨利上游开采，压中游炼化价差。</li></ul>
+<h3 id="sec18">3.2 ② 中游制造：订单与价差的夹心层</h3>
+<p><strong>成员</strong>：电力设备（电池/光伏/风电/电网）、机械设备、国防军工、建筑材料、建筑装饰</p>
+<p><strong>核心原理</strong>：</p>
+<ul>
+<li>中游的利润 = 终端需求 ×（产品价格 − 原材料成本）。<strong>上游涨价挤压它，下游砍单伤害它</strong>，两头受气，所以中游景气看"需求增速 > 成本增速"。</li>
+<li>电力设备是 2021-2024 的最大抱团板块，如今分化：<strong>电网设备（受益 AI 数据中心用电+特高压）> 储能 > 光伏（产能过剩出清中）> 锂电（格局稳定后看需求）</strong>。</li>
+<li>军工是"订单驱动"特例：不看宏观，看国防预算与装备列装节奏，与大盘相关性低，是天然的对冲板块。</li>
+<li>机械设备是"宏观温度计"：挖掘机销量、机床订单、机器人渗透率——制造业投资先行指标。</li>
+<li>建材/建筑是"地产链"成员：地产新开工决定水泥/玻璃/防水需求。今天房屋建设 +2.46%（基建预期）、光伏主材 -2.28%（产能过剩压制）、玻璃玻纤主力净流出 10.5 亿——中游的分化在实时数据里清清楚楚。</li></ul>
+<p><strong>与上下游的关系</strong>：上游涨价周期中，中游利润被挤压（2021-22 锂电材料 vs 电池）；上游降价周期中，中游反而受益（2023-24 硅料降价→组件/储能盈利改善）。<strong>跟踪中游，先看两端</strong>。</p>
+<h3 id="sec19">3.3 ③ 下游消费：确定性溢价与"超跌修复"</h3>
+<p><strong>成员</strong>：食品饮料、医药生物、家用电器、汽车、商贸零售、社会服务、纺织服饰、轻工制造、美容护理、农林牧渔（下游加工）</p>
+<p><strong>核心原理</strong>：</p>
+<ul>
+<li>消费股的估值锚是"<strong>确定性</strong>"：业绩稳定 → 给确定性溢价。经济好时弹性不如成长，经济差时抗跌。</li>
+<li>板块内部分成<strong>必选</strong>（食品、医药、日用品——需求刚性）与<strong>可选</strong>（白酒、家电、旅游、汽车——收入弹性大）。经济拐点期，<strong>必选先稳，可选后弹</strong>。</li>
+<li><strong>医药生物是最特殊的大消费</strong>：它同时具备消费属性（老龄化刚需）+ 成长属性（创新药/生物科技）+ 政策属性（集采/医保）。因此医药是"攻守兼备"的板块，也是每次市场风格切换时的中转站。</li></ul>
+<p><strong>医药内部产业链（今天全线上涨的原因解读）</strong>：</p>
+<pre class="codeblock">原料药 → 化学制剂/生物制品 → 医药商业(流通) → 医院/药店
+   │           │                   │
+   └── 研发服务外包(CRO/CDMO) ← 创新药企业需求
+   └── 上游：CXO 提供研发外包（今天 +6.71% 领涨全场）</pre>
+<ul>
+<li><strong>为什么今天是医药领涨？</strong> 三重逻辑共振：① 超跌修复——上半年科技独涨、医药跌到历史低估值区间，7 月以来机构开始调仓（医药 7 月以来涨超 10%）；② 基本面拐点——创新药龙头中报业绩亮眼、<strong>出海授权（License-out）提速</strong>，行业从"政策压制"转为"业绩验证"；③ 新催化——AI 制药主题（"AI 重构创新药研发底座"）+ 减肥药/CAR-T 等大单品放量。</li>
+<li>概念榜验证：CRO +5.86%（主力 +19.2 亿）、创新药 +3.13%（+38 亿）、CAR-T +4.11%、减肥药 +3.29%、基因测序 +3.23%——<strong>资金沿着"创新药产业链"系统性地流入</strong>，而不是单点炒作，这是板块级行情而非个股行情。</li></ul>
+<p><strong>消费与宏观</strong>：社零数据、CPI、居民收入预期是基本面锚；白酒库存与批价、猪肉价格、家电销量是高频跟踪指标。食品饮料 YTD 与 7 月以来均走强（+10%+），与医药同属"再平衡"受益方。</p>
+<h3 id="sec20">3.4 ④ 科技成长：渗透率与创新周期</h3>
+<p><strong>成员</strong>：电子（半导体/消费电子/元件/光学光电子）、计算机（软件/IT服务）、通信（设备/运营商/光通信）、传媒（游戏/影视/广告）</p>
+<p><strong>核心原理</strong>：</p>
+<ul>
+<li>成长股的定价核心是<strong>渗透率曲线（S 曲线）</strong>：0-10% 是主题炒作期（讲故事，涨最猛、波动最大）；10%-50% 是业绩兑现期（看订单和业绩增速）；50%+ 是成熟期（杀估值，变成价值股）。<strong>同一技术，不同阶段赚不同钱</strong>。</li>
+<li>科技链存在"硬→软"的传导顺序：<strong>算力硬件（芯片/光模块/服务器）→ 网络设备 → 终端（手机/PC/汽车）→ 软件应用（AI应用/游戏）</strong>。2025-26 的 AI 行情正沿着"硬件先行"规律展开：上半年电子、通信暴涨，8 月资金开始向 AI 应用端扩散（中信建投观点）。</li>
+<li>估值弹性来自"久期"：成长股大部分价值在未来现金流，利率下行时估值弹性最大——所以<strong>成长股是利率的"杠杆"</strong>。</li></ul>
+<p><strong>内部关系</strong>：</p>
+<ul>
+<li>半导体链条：设计 → 制造（晶圆厂）→ 封测 → 材料/设备。材料设备是"卖铲子"的（不受芯片价格周期影响，看资本开支），今天半导体设备 YTD +95.8% 印证；制造看稼动率与国产替代；设计看新品周期。</li>
+<li>通信链条：运营商（类公用事业、高股息）vs 设备商（光模块/CPO——AI 算力最纯正受益者）。今天通信板块主力净流入 58.1 亿全场第一，通信设备 +51.4 亿——<strong>光通信/CPO 超跌反弹</strong>（8/10 曾遭 141 亿获利兑现后暴力反弹）。</li>
+<li>传媒/软件是"应用端"：看 AI 应用落地、游戏版号、影视票房；与硬件端是<strong>跷跷板</strong>（资金从硬件溢出时，应用端补涨）。</li>
+<li>电子与半导体今天 +0.7% 左右涨幅温和但主力净流入 43 亿——<strong>"量在价先"</strong>，资金已经在悄悄回补。</li></ul>
+<h3 id="sec21">3.5 ⑤ 金融地产：信用与杠杆的放大器</h3>
+<p><strong>成员</strong>：银行、非银金融（券商/保险）、房地产</p>
+<p><strong>核心原理</strong>：</p>
+<ul>
+<li>银行是"经济的杠杆"：净息差 × 资产规模 = 利润。经济过热加息期息差扩大（美国银行）或信贷扩张期（中国）是盈利窗口；经济下行期关注不良资产暴露。<strong>银行股同时是最大的高股息池</strong>（今天国有大型银行 PE 仅 7.5、YTD -1%），是险资和"红利策略"的压舱石。</li>
+<li>券商是"牛市旗手"：业绩 = 成交额 × 佣金 + 两融利息 + 自营投资。<strong>大盘放量上涨时券商必然跟随，是情绪行情的放大器</strong>（今天两市成交活跃，券商值得跟踪）。</li>
+<li>保险：资产端（债券利率/股市）+ 负债端（保费）双轮；利率下行利好负债端久期，但压资产端收益率——实际是"利率的半个朋友"。</li>
+<li>房地产是"周期之母"：地产 → 建材/钢铁/家电/家居/物业/银行的产业链上游需求源头。2021 年后地产处于下行出清期，房地产链整体承压（今天房产租赁经纪 -2.33%），地产链的机会更多来自"政策博弈"（保交楼、收储、限购放松）与供给侧出清后的格局改善。</li></ul>
+<p><strong>联动关系</strong>：金融是宏观的"先行官"——社融回升先涨银行，行情启动先涨券商，地产企稳则建材家电后周期跟上。<strong>"地产链"是理解中国宏观周期的钥匙</strong>。</p>
+<h3 id="sec22">3.6 ⑥ 防御与红利：避险的避风港</h3>
+<p><strong>成员</strong>：公用事业（电力/水务/燃气）、交通运输（公路/铁路/港口/航空）、环保，以及"红利化"的银行、煤炭、运营商</p>
+<p><strong>核心原理</strong>：</p>
+<ul>
+<li>防御板块的共同点：<strong>需求刚性、现金流稳定、政策定价（电价/水价/运价）</strong>，盈利与宏观周期的相关性低。</li>
+<li>它们的估值锚是<strong>股息率</strong>：当股息率（如 5%）显著高于国债收益率（如 2%）时，资金把它当"超长债"配置。<strong>利率越低，红利资产越贵</strong>。</li>
+<li>公用事业还有"成长性变奏"：AI 数据中心用电 → 电力需求增长（今天电力板块主力净流入 19.9 亿、火电 +17.2 亿，YTD +30%）——"红利变成长"是 2025-26 的新逻辑。</li></ul>
+<p><strong>何时启动</strong>：市场风险偏好下降、经济预期转弱、利率下行时，防御板块相对收益最明显。7 月以来煤炭 +18% YTD、电力 +14% YTD、公用事业 +9.9% YTD——与医药、消费并列"再平衡"的受益方，正说明 8 月市场处于"进攻性下降、防御性上升"的过渡期。</p>
+<hr/>
+<h2 id="sec23">第四章 板块间的传导与互动：关系的原理</h2>
+<h3 id="sec24">4.1 产业链价格传导链（"成本推"与"需求拉"）</h3>
+<p>板块之间最硬的联系是<strong>价格传导</strong>。一张图看懂 A 股主要传导链：</p>
+<pre class="codeblock">原油 ─→ 炼化 ─→ 化工品 ─→ 化纤/塑料 ─→ 纺织服装/家电外壳 ─→ 终端消费
+ └─→ 成品油/航空燃油 ─→ 航空、物流成本
+铜 ─→ 电网设备/变压器 ─→ 数据中心/新能源/基建
+铝 ─→ 汽车轻量化/光伏边框/包装 ─→ 终端
+锂/镍 ─→ 电池 ─→ 新能源车/储能 ─→ 充电/回收
+硅 ─→ 光伏产业链 ─→ 电站 ─→ 绿电运营
+猪 ─→ 屠宰 ─→ 肉制品 ─→ 餐饮/食品
+地产新开工 ─→ 水泥/玻璃/钢铁/防水 ─→ 竣工 ─→ 家电/家居/物业
+AI算力需求 ─→ 光模块/PCB/服务器/电力 ─→ 数据中心运营 ─→ AI应用</pre>
+<p><strong>两条最基本的传导逻辑</strong>：</p>
+<ol>
+<li><strong>成本推动型（上游→下游）</strong>：原油/铜/煤涨价 → 中游成本上升 → 下游涨价或利润被挤压。研究下游利润，先看上游价格。</li>
+<li><strong>需求拉动型（下游→上游）</strong>：AI 资本开支 → 服务器需求 → 芯片/光模块订单 → 上游材料（铜、PCB 覆铜板、半导体材料）。<strong>终端景气会"沿着产业链向上游传导"，且越往上游弹性越大</strong>。</li></ol>
+<h3 id="sec25">4.2 资金跷跷板：存量博弈下的"你涨我跌"</h3>
+<p>A股在多数时间是<strong>存量资金市场</strong>（总成交额在一定区间内），板块之间因此存在明显的"跷跷板"：</p>
+<ul>
+<li><strong>科技 vs 周期 vs 医药</strong>：历史上这三大方向的资金互相迁徙。2026 年 8 月的"再平衡"就是教科书案例——电子/通信 7 月被卖出（回撤 20%+），资金流入医药（+10%+）、资源、消费。</li>
+<li><strong>进攻 vs 防御</strong>：风险偏好高的阶段，资金离开红利去买成长；风险偏好低时反向。</li>
+<li><strong>大盘 vs 小盘</strong>：增量资金（新发基金、外资）偏好大盘；存量博弈、题材活跃期偏好小盘。</li></ul>
+<p><strong>今天（8/13）就是跷跷板的实拍</strong>：医药（+54 亿流入）和通信（+58 亿流入）的增量，很大部分来自有色（-115 亿流出）的兑现盘——同一天内，市场完成了"卖资源 → 买医药+通信"的切换。</p>
+<h3 id="sec26">4.3 宏观变量的传导地图（自上而下的主干道）</h3>
+<pre class="codeblock">货币政策(降准降息) → 利率↓ → 成长股估值↑ + 高股息吸引力↑ + 券商/地产受益
+财政/基建投资      → 订单 → 建材/机械/钢铁 → 就业/收入 → 消费
+社融/信贷          → 银行扩表 + 地产/企业投资 → 大宗商品需求
+PPI(工业品价格)    → 上游利润分配 + 中游价差
+CPI               → 消费定价权 + 必选消费相对收益
+出口/汇率          → 出口制造(家电/汽车/机械)业绩弹性
+产业政策          → 个别行业的需求曲线移动(新能源/半导体/医药/低空经济)</pre>
+<p><strong>研究任何板块，先问三个问题</strong>：</p>
+<ol>
+<li>它的需求从哪来？（投资/消费/出口/政府）</li>
+<li>它的价格由谁定？（市场价/政府定价/成本加成）</li>
+<li>它的成本受什么影响？（上游商品/人工/利率）</li></ol>
+<h3 id="sec27">4.4 先行指标与验证指标（"看门道"的工具箱）</h3>
+<div class="tblwrap"><table><thead><tr><th>板块集群</th><th>先行指标（领先）</th><th>同步验证（确认）</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>上游资源</th><th>商品期货价格、全球制造业 PMI、美元指数</th><th>库存、PPI、上市公司毛利率</th></tr></thead><tbody>
+<tr><td>中游制造</td><td>挖掘机销量、电网投资额、军费预算</td><td>PMI 新订单、产能利用率</td></tr>
+<tr><td>消费</td><td>社零、居民收入、白酒批价、猪肉价</td><td>CPI、企业现金流、库存去化</td></tr>
+<tr><td>医药</td><td>医保谈判目录、创新药获批/出海授权数</td><td>集采中标、CXO 订单（在手订单）</td></tr>
+<tr><td>科技</td><td>全球半导体销售额、资本开支指引、渗透率</td><td>财报业绩增速、新产品销量</td></tr>
+<tr><td>金融地产</td><td>社融/M2、地产销售面积、两融余额</td><td>净息差、不良率、成交额</td></tr>
+<tr><td>防御</td><td>国债收益率、股息率价差</td><td>发电量、货运量</td></tr>
+</tbody></table></div>
+<blockquote>记住：<strong>领先指标决定"方向"，验证指标决定"幅度与持续性"</strong>。用先行指标布局，用同步指标确认，用滞后指标（财报）收尾。</blockquote>
+<hr/>
+<h2 id="sec28">第五章 实战案例：用 2026-08-13 实时数据拆解板块轮动</h2>
+<h3 id="sec29">5.1 大盘概览（13:44 盘中快照）</h3>
+<div class="tblwrap"><table><thead><tr><th>指数</th><th>点位</th><th>涨跌幅</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>上证指数</th><th>3963.95</th><th>+0.44%</th></tr></thead><tbody>
+<tr><td>深证成指</td><td>14524.08</td><td>+0.76%</td></tr>
+<tr><td>创业板指</td><td>3656.13</td><td>+1.50%</td></tr>
+<tr><td>科创50</td><td>1764.01</td><td>+1.56%</td></tr>
+</tbody></table></div>
+<p><strong>读法</strong>：指数小涨、成长指数（创业板/科创）明显更强 → 今天是"结构性行情"，资金在板块间快速轮动，赚钱效应集中在少数方向。</p>
+<h3 id="sec30">5.2 今日强势方向一：医药生物（全链爆发）</h3>
+<div class="tblwrap"><table><thead><tr><th>行业板块</th><th>日涨跌</th><th>主力净流入</th><th>逻辑标签</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>医疗研发外包（CRO）</th><th>+6.71%</th><th>+15.1 亿</th><th>创新药产业链"卖铲人"</th></tr></thead><tbody>
+<tr><td>诊断服务</td><td>+6.49%</td><td>+0.8 亿</td><td>医疗服务</td></tr>
+<tr><td>医疗服务</td><td>+5.10%</td><td>+15.6 亿</td><td>医院/服务</td></tr>
+<tr><td>生物制品</td><td>+3.46%</td><td>+8.7 亿</td><td>疫苗/血液制品</td></tr>
+<tr><td>化学制药</td><td>+2.64%</td><td>+11.6 亿</td><td>创新药主体</td></tr>
+<tr><td><strong>医药生物（整体）</strong></td><td><strong>+2.62%</strong></td><td><strong>+54.2 亿</strong></td><td>全链共振</td></tr>
+</tbody></table></div>
+<p>概念板块同步验证：CRO +5.86%、创新药 +3.13%（+38 亿）、CAR-T +4.11%、减肥药 +3.29%、基因测序 +3.23%。</p>
+<p><strong>为什么</strong>（原理回顾）：</p>
+<ol>
+<li><strong>位置</strong>：医药 YTD 涨幅远小于科技，7 月前处于"超跌区"，估值修复空间大；</li>
+<li><strong>催化</strong>：创新药出海授权提速 + 中报业绩兑现 + AI 制药新主题；</li>
+<li><strong>资金</strong>：主力净流入 54 亿居全行业第二，且流入是"全链式"（外包→制剂→服务→商业）而非单点 → 机构级调仓，不是游资一日游。</li></ol>
+<p><strong>学习要点</strong>：当一个行业板块与其子板块、概念板块"同向共振"且资金呈链式流入时，行情级别高；若只有概念炒作而行业指数不动，则只是情绪脉冲。</p>
+<h3 id="sec31">5.3 今日强势方向二：通信（AI 算力超跌反弹）</h3>
+<div class="tblwrap"><table><thead><tr><th>板块</th><th>日涨跌</th><th>主力净流入</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>通信（整体）</th><th>+1.51%</th><th><strong>+58.1 亿（全场第一）</strong></th></tr></thead><tbody>
+<tr><td>通信网络设备及器件</td><td>+2.15%</td><td>+52.7 亿</td></tr>
+<tr><td>通信设备</td><td>+1.52%</td><td>+51.4 亿</td></tr>
+<tr><td>概念：F5G</td><td>+2.64%</td><td>+28.2 亿</td></tr>
+</tbody></table></div>
+<p><strong>为什么</strong>：光通信/CPO 是 AI 算力最确定的方向（业绩已兑现），8/10 遭百亿获利兑现后超跌，资金逢低回补。<strong>这诠释了"景气主线在高波动期的下跌是上车机会还是出货信号"——判断标准是景气是否被证伪：光模块订单与海外大厂资本开支仍在增长 → 属于情绪性回撤</strong>。</p>
+<h3 id="sec32">5.4 今日弱势方向：有色金属（获利兑现）</h3>
+<div class="tblwrap"><table><thead><tr><th>板块</th><th>日涨跌</th><th>主力净流出</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>有色金属（整体）</th><th>-1.48%</th><th><strong>-115.0 亿（全场第一）</strong></th></tr></thead><tbody>
+<tr><td>工业金属</td><td>-1.97%</td><td>-55.7 亿</td></tr>
+<tr><td>贵金属</td><td>-4.05%</td><td>-24.0 亿</td></tr>
+<tr><td>黄金</td><td>-3.78%</td><td>-17.5 亿</td></tr>
+</tbody></table></div>
+<p><strong>为什么</strong>：上半年资源涨价链涨幅巨大（钨 YTD +111%、玻纤 +101%），7 月以来又涨了一轮，短期拥挤度高；今日资金大规模兑现并转场医药/通信。<strong>贵金属单日 -4% 属于高波动兑现，需观察美元/实际利率是否趋势反转来判定是"回调"还是"反转"</strong>——这就是"板块关系"的应用：同一板块内部（黄金 vs 工业金属）逻辑不同，同一时点（涨多 vs 涨少）位置不同，应对不同。</p>
+<h3 id="sec33">5.5 年初至今轮动全景（谁在领跑，为什么）</h3>
+<div class="tblwrap"><table><thead><tr><th>排名</th><th>板块</th><th>YTD 涨幅</th><th>驱动原理</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>1</th><th>钨</th><th>+111%</th><th>供给收缩（战略小金属）+ 出口管制预期</th></tr></thead><tbody>
+<tr><td>2</td><td>玻纤制造</td><td>+101%</td><td>供给侧出清 + 涨价周期启动</td></tr>
+<tr><td>3</td><td>半导体设备</td><td>+96%</td><td>国产替代 + AI 资本开支（"卖铲子"）</td></tr>
+<tr><td>4</td><td>半导体材料</td><td>+78%</td><td>同上，国产化率提升</td></tr>
+<tr><td>5</td><td>激光设备</td><td>+69%</td><td>制造业升级 + 半导体激光器</td></tr>
+<tr><td>6</td><td>元件/被动元件</td><td>+61~62%</td><td>AI 服务器用量激增（MLCC/电感）</td></tr>
+<tr><td>7</td><td>印制电路板</td><td>+61%</td><td>AI 服务器 PCB 量价齐升</td></tr>
+<tr><td>8</td><td>医疗研发外包</td><td>+53%</td><td>创新药景气反转（7 月以来加速）</td></tr>
+<tr><td>9</td><td>通信线缆及配套</td><td>+52%</td><td>数据中心/光通信配套</td></tr>
+</tbody></table></div>
+<p><strong>读法</strong>：YTD 榜=两条主线<strong>——"AI 硬件产业链"（半导体设备/材料/元件/PCB/激光）与"供给侧涨价链"（钨/玻纤/化工）</strong>，医药（CRO）则是 7 月后新加入的第三条线。而 8 月 12 日数据显示：电子 YTD 从 +86% 回落到 +37.9%、通信从 +74% 回到 +31.3%——<strong>高位板块回撤、低位板块补涨，"再平衡"正在进行时</strong>。</p>
+<h3 id="sec34">5.6 市场背景：2026 年 8 月的"再平衡"行情（机构视角）</h3>
+<ul>
+<li><strong>兴业证券</strong>：经历"再平衡"后，今年已不再是"分化市"；</li>
+<li><strong>华西证券</strong>：8 月风格再平衡与行业轮动特征明显，秋季行情进入布局阶段；</li>
+<li><strong>光大证券</strong>：沿三条业绩主线配置——科技硬件（半导体/AI 算力/存储）、涨价链（有色/化工/煤炭）、出口制造（储能/电力设备/汽车）；</li>
+<li><strong>中信建投</strong>：AI 仍是中期景气主线，但资金向 AI 应用端扩散；创新药政策与出海逻辑仍在。</li></ul>
+<p><strong>归纳</strong>：主流机构共识 = 景气主线（AI 硬件）没有破坏 + 扩散方向（应用/医药/资源/出口）百花齐放。这与我们数据观察到的"医药全链流入 + 通信回补 + 有色兑现"完全互证。</p>
+<hr/>
+<h2 id="sec35">第六章 学习与跟踪框架</h2>
+<h3 id="sec36">6.1 自上而下的三层框架</h3>
+<pre class="codeblock">第一层：宏观环境 ── 经济周期位置(美林时钟/库存周期)、利率方向、社融、PPI/CPI
+第二层：风格判断 ── 风险偏好高低 → 成长/价值、大小盘、进攻/防御
+第三层：行业选择 ── 景气度(量价订单) + 估值位置(历史分位) + 资金动向(主力/北向/两融)</pre>
+<p><strong>每个板块都可以用一张"卡片"定位</strong>，例如：</p>
+<div class="tblwrap"><table><thead><tr><th>维度</th><th>医药生物（今日案例）</th><th>有色金属</th><th>通信（光模块）</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>周期位置</th><th>景气反转早期</th><th>高位兑现期</th><th>高景气+情绪回撤</th></tr></thead><tbody>
+<tr><td>风格属性</td><td>成长+防御双属性</td><td>周期价值</td><td>成长</td></tr>
+<tr><td>估值位置</td><td>历史低位（超跌）</td><td>中性</td><td>高（但业绩支撑）</td></tr>
+<tr><td>资金动向</td><td>主力大幅流入</td><td>主力大幅流出</td><td>主力回流</td></tr>
+<tr><td>结论</td><td>趋势性机会</td><td>观察回踩</td><td>高波动持有逻辑</td></tr>
+</tbody></table></div>
+<h3 id="sec37">6.2 中观景气跟踪清单（每个板块盯 2-3 个指标即可）</h3>
+<div class="tblwrap"><table><thead><tr><th>板块</th><th>必盯指标</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>煤炭/石化</th><th>动力煤价、布油、港口库存</th></tr></thead><tbody>
+<tr><td>有色</td><td>LME/沪期价格、美元指数、库存</td></tr>
+<tr><td>钢铁/化工</td><td>螺纹钢价、价差（吨钢利润/化工价差）</td></tr>
+<tr><td>电力设备</td><td>电池排产、光伏组件价格、电网投资额、储能招标</td></tr>
+<tr><td>机械</td><td>挖掘机销量、机床订单、PMI 新订单</td></tr>
+<tr><td>医药</td><td>创新药出海授权额、CXO 订单、医保目录、集采结果</td></tr>
+<tr><td>食品饮料</td><td>白酒批价、社零、CPI 食品分项</td></tr>
+<tr><td>家电/汽车</td><td>排产、零售数据、出口数据</td></tr>
+<tr><td>电子/半导体</td><td>全球半导体销售额、台积电月度营收、存储价格、国产设备中标</td></tr>
+<tr><td>通信</td><td>光模块订单/出货、运营商资本开支、海外云厂商 Capex</td></tr>
+<tr><td>计算机/软件</td><td>订单、AI 应用活跃度、政府/企业 IT 预算</td></tr>
+<tr><td>银行</td><td>社融、LPR、净息差、不良率</td></tr>
+<tr><td>地产</td><td>销售面积、新开工、房贷利率、政策力度</td></tr>
+<tr><td>公用事业</td><td>电价、发电量、股息率-国债利差</td></tr>
+</tbody></table></div>
+<h3 id="sec38">6.3 每日/每周观察清单（数据源）</h3>
+<ul>
+<li><strong>每日（盘中）</strong>：东财/同花顺行业板块涨跌榜、概念涨跌榜、主力资金净流入榜、两市成交额、涨停家数/连板高度（情绪温度）——30 秒扫完；</li>
+<li><strong>每周</strong>：申万一级行业周涨跌幅（看轮动方向）、北向资金周度流向、行业 ETF 份额变化（机构申购方向）；</li>
+<li><strong>每月</strong>：PMI、社融、CPI/PPI、工业企业利润（宏观定位）；行业高频数据（销量/价格/库存）；</li>
+<li><strong>每季度</strong>：财报验证（营收/利润增速、毛利率、现金流），<strong>这是检验"故事"成色的唯一标准</strong>。</li></ul>
+<h3 id="sec39">6.4 常见误区（避坑）</h3>
+<ol>
+<li><strong>把"涨得好"当"逻辑好"</strong>：先有逻辑后有涨幅才是趋势；涨幅已有但逻辑未明，是接盘。</li>
+<li><strong>只看当日涨幅榜</strong>：单日榜噪音极大，看 <strong>5 日/20 日/60 日</strong> 才能识别趋势（本文同时给了三个时间维度的数据就是这个用意）。</li>
+<li><strong>概念与行业混为一谈</strong>：概念负责情绪，行业负责业绩，两者共振才可靠。</li>
+<li><strong>忽略估值位置</strong>：同一个板块，低位利好是机会，高位利好是出货（今天的医药 vs 有色就是对照组）。</li>
+<li><strong>迷信单一指标</strong>：主力资金流入可能是"对倒"或一日游，要结合价格趋势与逻辑验证。</li>
+<li><strong>刻舟求剑地套周期</strong>：宏观周期越来越短、政策干预频繁，美林时钟要结合"政策底/市场底/盈利底"灵活使用。</li></ol>
+<hr/>
+<h2 id="sec40">附录</h2>
+<h3 id="sec41">附录 A：数据说明与免责声明</h3>
+<ul>
+<li>行情数据来源：东方财富公开行情接口（push2.eastmoney.com），快照时间 2026-08-13 13:44（盘中），成交额/净流入单位为亿元；</li>
+<li>"近60日"字段按东方财富口径为近 60 个交易日涨跌幅，"年初至今"为 2026-01-01 起涨跌幅（快照数据，可能与收盘口径有细微差异）；</li>
+<li>部分板块 PE 为负或极大值（亏损/微利公司占比高），解读时以行业结构而非绝对数字为准；</li>
+<li>市场背景信息来自 2026-08-12 前后公开财经报道（兴业/华西/光大/中信建投等机构观点）；</li>
+<li><strong>本报告仅为学习与研究用途，不构成任何投资建议。股市有风险，投资需谨慎。</strong></li></ul>
+<h3 id="sec42">附录 B：术语表</h3>
+<div class="tblwrap"><table><thead><tr><th>术语</th><th>含义</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>申万一级行业</th><th>券商研究事实标准的行业分类，31 个大类</th></tr></thead><tbody>
+<tr><td>概念板块</td><td>按主题/题材将沾边公司归为一组，口径弹性大</td></tr>
+<tr><td>美林时钟</td><td>以增长×通胀四象限划分经济周期并匹配资产/板块</td></tr>
+<tr><td>库存周期（基钦周期）</td><td>约 40 个月的库存波动周期，四阶段轮动</td></tr>
+<tr><td>PPI / CPI</td><td>工业品出厂价格指数 / 居民消费价格指数</td></tr>
+<tr><td>社融</td><td>社会融资规模，宽信用的核心观测指标</td></tr>
+<tr><td>主力资金</td><td>通常指大单/超大单成交，反映机构与大户动向</td></tr>
+<tr><td>换手率</td><td>成交量/流通股本，衡量板块活跃度</td></tr>
+<tr><td>估值分位</td><td>当前 PE/PB 在历史区间的位置，衡量贵贱</td></tr>
+<tr><td>渗透率</td><td>新产品在目标市场中的普及比例，成长股定价核心</td></tr>
+<tr><td>红利/高股息</td><td>分红率高、股息率高的防御型资产策略</td></tr>
+<tr><td>抱团</td><td>机构资金集中持有少数景气方向的正反馈现象</td></tr>
+<tr><td>跷跷板</td><td>存量资金下板块间的此消彼长</td></tr>
+<tr><td>License-out</td><td>创新药企业将海外权益授权给跨国药企，获得首付款+里程碑款</td></tr>
+<tr><td>CRO/CDMO</td><td>医药研发外包/生产外包服务商（"卖铲人"）</td></tr>
+</tbody></table></div>
+<h3 id="sec43">附录 C：今日全数据速查（2026-08-13 13:44 快照）</h3>
+<h4 id="sec44">C1. 行业板块涨幅前 15</h4>
+<div class="tblwrap"><table><thead><tr><th>板块</th><th>日涨跌</th><th>成交额</th><th>换手率</th><th>PE(动)</th><th>近60日</th><th>年初至今</th><th>主力净流入</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>医疗研发外包</th><th>6.71%</th><th>385.5亿</th><th>8.05</th><th>36.6</th><th>42.70%</th><th>52.73%</th><th>15.1亿</th></tr></thead><tbody>
+<tr><td>诊断服务</td><td>6.49%</td><td>21.4亿</td><td>5.45</td><td>-72.4</td><td>11.41%</td><td>12.99%</td><td>0.8亿</td></tr>
+<tr><td>医疗服务</td><td>5.10%</td><td>476.1亿</td><td>4.66</td><td>41.9</td><td>21.28%</td><td>27.17%</td><td>15.6亿</td></tr>
+<tr><td>其他数字媒体</td><td>4.87%</td><td>19.3亿</td><td>19.79</td><td>-78.5</td><td>1.50%</td><td>51.64%</td><td>1.6亿</td></tr>
+<tr><td>其他生物制品</td><td>4.14%</td><td>158.7亿</td><td>2.88</td><td>93.5</td><td>9.39%</td><td>8.70%</td><td>7.1亿</td></tr>
+<tr><td>生物制品</td><td>3.46%</td><td>192.5亿</td><td>2.01</td><td>-320.8</td><td>4.88%</td><td>3.54%</td><td>8.7亿</td></tr>
+<tr><td>卫浴电器</td><td>3.15%</td><td>1.8亿</td><td>1.38</td><td>25.3</td><td>-10.59%</td><td>-20.93%</td><td>0.2亿</td></tr>
+<tr><td>原料药</td><td>2.89%</td><td>125.3亿</td><td>3.17</td><td>70.0</td><td>2.56%</td><td>9.37%</td><td>-0.5亿</td></tr>
+<tr><td>其他专业服务</td><td>2.66%</td><td>1.9亿</td><td>1.60</td><td>62.6</td><td>-5.94%</td><td>6.02%</td><td>0.1亿</td></tr>
+<tr><td>化学制药</td><td>2.64%</td><td>559.7亿</td><td>3.62</td><td>57.1</td><td>2.95%</td><td>3.08%</td><td>11.6亿</td></tr>
+<tr><td>医药生物</td><td>2.62%</td><td>1688.9亿</td><td>3.24</td><td>49.5</td><td>3.20%</td><td>3.25%</td><td>54.2亿</td></tr>
+<tr><td>化学制剂</td><td>2.54%</td><td>434.4亿</td><td>3.75</td><td>55.4</td><td>3.06%</td><td>0.76%</td><td>12.0亿</td></tr>
+<tr><td>医院</td><td>2.50%</td><td>59.4亿</td><td>3.05</td><td>47.2</td><td>-2.16%</td><td>1.86%</td><td>-0.5亿</td></tr>
+<tr><td>房屋建设Ⅲ</td><td>2.46%</td><td>19.3亿</td><td>0.87</td><td>7.1</td><td>-10.31%</td><td>-12.99%</td><td>1.9亿</td></tr>
+<tr><td>房屋建设Ⅱ</td><td>2.46%</td><td>19.3亿</td><td>0.87</td><td>7.1</td><td>-10.31%</td><td>-12.99%</td><td>1.9亿</td></tr>
+</tbody></table></div>
+<h4 id="sec45">C2. 行业板块跌幅前 15</h4>
+<div class="tblwrap"><table><thead><tr><th>板块</th><th>日涨跌</th><th>成交额</th><th>换手率</th><th>PE(动)</th><th>近60日</th><th>年初至今</th><th>主力净流入</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>白银</th><th>-4.95%</th><th>67.1亿</th><th>7.48</th><th>29.4</th><th>-5.08%</th><th>17.57%</th><th>-6.5亿</th></tr></thead><tbody>
+<tr><td>纺织鞋类制造</td><td>-4.55%</td><td>1.6亿</td><td>0.38</td><td>14.5</td><td>-2.84%</td><td>-28.06%</td><td>0.0亿</td></tr>
+<tr><td>贵金属</td><td>-4.05%</td><td>206.9亿</td><td>3.69</td><td>24.0</td><td>1.69%</td><td>25.10%</td><td>-24.0亿</td></tr>
+<tr><td>其他饰品</td><td>-3.86%</td><td>0.9亿</td><td>1.69</td><td>-22.3</td><td>-13.31%</td><td>-9.16%</td><td>-0.2亿</td></tr>
+<tr><td>黄金</td><td>-3.78%</td><td>139.8亿</td><td>2.68</td><td>23.1</td><td>3.46%</td><td>25.01%</td><td>-17.5亿</td></tr>
+<tr><td>院线</td><td>-3.31%</td><td>27.9亿</td><td>7.44</td><td>-58.2</td><td>-7.80%</td><td>-16.33%</td><td>-2.2亿</td></tr>
+<tr><td>钾肥</td><td>-3.23%</td><td>36.5亿</td><td>1.23</td><td>17.5</td><td>-11.29%</td><td>5.55%</td><td>-2.9亿</td></tr>
+<tr><td>房产租赁经纪</td><td>-2.33%</td><td>3.8亿</td><td>2.74</td><td>-30.9</td><td>-27.29%</td><td>-16.06%</td><td>-0.4亿</td></tr>
+<tr><td>光伏主材</td><td>-2.28%</td><td>19.8亿</td><td>1.26</td><td>-9.6</td><td>-17.15%</td><td>-34.94%</td><td>-3.1亿</td></tr>
+<tr><td>铅锌</td><td>-2.03%</td><td>50.3亿</td><td>2.31</td><td>26.0</td><td>-8.51%</td><td>14.92%</td><td>-8.0亿</td></tr>
+<tr><td>铝</td><td>-1.99%</td><td>153.5亿</td><td>2.14</td><td>12.7</td><td>-12.83%</td><td>-4.72%</td><td>-16.5亿</td></tr>
+<tr><td>工业金属</td><td>-1.97%</td><td>430.1亿</td><td>1.90</td><td>15.7</td><td>-8.97%</td><td>0.39%</td><td>-55.7亿</td></tr>
+<tr><td>房地产综合服务</td><td>-1.97%</td><td>0.4亿</td><td>1.46</td><td>62.1</td><td>-13.32%</td><td>-20.48%</td><td>0.0亿</td></tr>
+<tr><td>钴</td><td>-1.97%</td><td>7.3亿</td><td>3.22</td><td>17.2</td><td>-17.62%</td><td>-12.12%</td><td>-0.9亿</td></tr>
+<tr><td>钨</td><td>-1.94%</td><td>105.2亿</td><td>4.24</td><td>48.2</td><td>13.70%</td><td>111.22%</td><td>-9.6亿</td></tr>
+</tbody></table></div>
+<h4 id="sec46">C3. 主力资金净流入前 15（行业）</h4>
+<div class="tblwrap"><table><thead><tr><th>板块</th><th>日涨跌</th><th>主力净流入</th><th>近60日</th><th>年初至今</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>通信</th><th>1.51%</th><th>58.1亿</th><th>-15.07%</th><th>8.70%</th></tr></thead><tbody>
+<tr><td>医药生物</td><td>2.62%</td><td>54.2亿</td><td>3.20%</td><td>3.25%</td></tr>
+<tr><td>通信网络设备及器件</td><td>2.15%</td><td>52.7亿</td><td>-11.56%</td><td>32.35%</td></tr>
+<tr><td>通信设备</td><td>1.52%</td><td>51.4亿</td><td>-13.85%</td><td>10.72%</td></tr>
+<tr><td>电子</td><td>0.69%</td><td>43.2亿</td><td>-7.49%</td><td>30.06%</td></tr>
+<tr><td>消费电子零部件及组装</td><td>1.11%</td><td>20.6亿</td><td>-11.61%</td><td>6.75%</td></tr>
+<tr><td>消费电子</td><td>1.00%</td><td>20.6亿</td><td>-12.12%</td><td>5.41%</td></tr>
+<tr><td>电力</td><td>0.74%</td><td>19.9亿</td><td>-8.70%</td><td>14.34%</td></tr>
+<tr><td>公用事业</td><td>0.63%</td><td>19.6亿</td><td>-8.86%</td><td>9.93%</td></tr>
+<tr><td>其他计算机设备</td><td>0.86%</td><td>17.3亿</td><td>-14.41%</td><td>-9.84%</td></tr>
+<tr><td>火力发电</td><td>1.19%</td><td>17.2亿</td><td>-5.05%</td><td>30.04%</td></tr>
+<tr><td>医疗服务</td><td>5.10%</td><td>15.6亿</td><td>21.28%</td><td>27.17%</td></tr>
+<tr><td>医疗研发外包</td><td>6.71%</td><td>15.1亿</td><td>42.70%</td><td>52.73%</td></tr>
+<tr><td>半导体</td><td>0.70%</td><td>14.9亿</td><td>-7.19%</td><td>43.72%</td></tr>
+<tr><td>集成电路制造</td><td>1.42%</td><td>14.2亿</td><td>-7.46%</td><td>23.99%</td></tr>
+</tbody></table></div>
+<h4 id="sec47">C4. 主力资金净流出前 15（行业）</h4>
+<div class="tblwrap"><table><thead><tr><th>板块</th><th>日涨跌</th><th>主力净流入</th><th>近60日</th><th>年初至今</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>有色金属</th><th>-1.48%</th><th>-115.0亿</th><th>-8.40%</th><th>5.06%</th></tr></thead><tbody>
+<tr><td>工业金属</td><td>-1.97%</td><td>-55.7亿</td><td>-8.97%</td><td>0.39%</td></tr>
+<tr><td>铜</td><td>-1.91%</td><td>-31.2亿</td><td>-3.60%</td><td>-3.05%</td></tr>
+<tr><td>小金属</td><td>-1.42%</td><td>-26.7亿</td><td>-0.86%</td><td>24.75%</td></tr>
+<tr><td>贵金属</td><td>-4.05%</td><td>-24.0亿</td><td>1.69%</td><td>25.10%</td></tr>
+<tr><td>基础化工</td><td>-0.42%</td><td>-21.9亿</td><td>-11.01%</td><td>-0.30%</td></tr>
+<tr><td>黄金</td><td>-3.78%</td><td>-17.5亿</td><td>3.46%</td><td>25.01%</td></tr>
+<tr><td>铝</td><td>-1.99%</td><td>-16.5亿</td><td>-12.83%</td><td>-4.72%</td></tr>
+<tr><td>半导体材料</td><td>-0.47%</td><td>-15.9亿</td><td>1.33%</td><td>77.61%</td></tr>
+<tr><td>通信线缆及配套</td><td>1.07%</td><td>-13.1亿</td><td>-22.34%</td><td>51.59%</td></tr>
+<tr><td>其他小金属</td><td>-1.44%</td><td>-12.3亿</td><td>-5.97%</td><td>14.88%</td></tr>
+<tr><td>建筑材料</td><td>-0.68%</td><td>-11.9亿</td><td>-9.49%</td><td>-0.33%</td></tr>
+<tr><td>软件开发</td><td>-0.26%</td><td>-11.2亿</td><td>-10.08%</td><td>-12.61%</td></tr>
+<tr><td>玻璃玻纤</td><td>-1.16%</td><td>-10.5亿</td><td>0.04%</td><td>25.72%</td></tr>
+<tr><td>能源金属</td><td>-0.45%</td><td>-10.0亿</td><td>-23.87%</td><td>-0.29%</td></tr>
+</tbody></table></div>
+<h4 id="sec48">C5. 概念板块涨幅前 15（含情绪指数，注意甄别）</h4>
+<div class="tblwrap"><table><thead><tr><th>板块</th><th>日涨跌</th><th>主力净流入</th><th>说明</th></tr></thead><tbody>
+</tbody></table></div>
+<p>|---|---|---|---|</p>
+<div class="tblwrap"><table><thead><tr><th>历史新高</th><th>20.00%</th><th>0.2亿</th><th>⚠️ 情绪统计指数（创新高个股集合）</th></tr></thead><tbody>
+<tr><td>昨日打二板以上表现</td><td>8.67%</td><td>-3.3亿</td><td>⚠️ 情绪统计指数</td></tr>
+<tr><td>昨日连板_含一字</td><td>6.50%</td><td>-6.8亿</td><td>⚠️ 情绪统计指数</td></tr>
+<tr><td>CRO</td><td>5.86%</td><td>19.2亿</td><td>医药研发外包（真实投资板块）</td></tr>
+<tr><td>重组蛋白</td><td>5.40%</td><td>8.1亿</td><td>医药</td></tr>
+<tr><td>CAR-T细胞疗法</td><td>4.11%</td><td>14.4亿</td><td>医药</td></tr>
+<tr><td>昨日连板</td><td>3.37%</td><td>-7.6亿</td><td>⚠️ 情绪统计指数</td></tr>
+<tr><td>减肥药</td><td>3.29%</td><td>3.2亿</td><td>医药</td></tr>
+<tr><td>肝炎概念</td><td>3.23%</td><td>2.3亿</td><td>医药</td></tr>
+<tr><td>基因测序</td><td>3.23%</td><td>8.2亿</td><td>医药</td></tr>
+<tr><td>创新药</td><td>3.13%</td><td>38.0亿</td><td>医药</td></tr>
+<tr><td>创新医疗服务</td><td>2.74%</td><td>18.9亿</td><td>医药</td></tr>
+<tr><td>F5G概念</td><td>2.64%</td><td>28.2亿</td><td>光通信（AI算力）</td></tr>
+<tr><td>免疫治疗</td><td>2.63%</td><td>5.1亿</td><td>医药</td></tr>
+<tr><td>精准诊断</td><td>2.62%</td><td>5.8亿</td><td>医药</td></tr>
+</tbody></table></div>
+<hr/>
+<p><em>报告完。本文档配套 HTML 版本可在浏览器中阅读。如有需要，我可以针对某个具体板块（如半导体、创新药、光通信）出一份深度专项报告，或把数据更新为收盘口径。</em></p>
+
+<hr/>
+<p style="color:var(--mut);font-size:13px">本报告由 ZCode 基于互联网公开数据自动生成整理，仅供学习研究，不构成投资建议。</p>
+</div>
+</body>
+</html>
