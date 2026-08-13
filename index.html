@@ -494,8 +494,26 @@
   <!-- ========== JavaScript ========== -->
   <script>
     // ===== 报告数据配置 =====
-    // 在此数组中添加新报告即可自动展示在首页
+    // 在此数组中添加新报告即可自动展示在首页（有 href 的直接打开独立 HTML 页面，否则走 Markdown 阅读器）
     const reports = [
+      {
+        href: '行业板块原理研究报告.html',
+        title: 'A股行业板块原理研究报告',
+        desc: '板块分类、运行原理与相互关系的系统梳理：美林时钟、库存周期、六大集群、产业链传导链与 2026-08-13 实时行情实证。',
+        date: '2026-08-13',
+        category: '股市研究',
+        icon: 'fa-chart-pie',
+        color: 'primary'
+      },
+      {
+        href: '热门10大板块深度报告.html',
+        title: '热门10大板块深度专项报告',
+        desc: '数据驱动评选当前最热 10 大板块（医药/半导体/AI硬件/金融/通信/消费/玻纤/电力/煤炭/机械），含热度评分、驱动逻辑与产业链深度拆解。',
+        date: '2026-08-13',
+        category: '股市研究',
+        icon: 'fa-fire',
+        color: 'accent'
+      },
       {
         file: 'complete_report.md',
         title: 'Trading Analysis Report: 002050.SZ',
@@ -573,7 +591,7 @@
         return `
           <article class="rounded-xl bg-dark-800/50 border border-white/5 overflow-hidden card-glow group cursor-pointer"
                    data-aos="fade-up" data-aos-delay="${i * 80}"
-                   onclick="openReport('${r.file}', '${escapeHtml(r.title)}')">
+                   onclick="${r.href ? `window.open('${r.href}','_blank')` : `openReport('${r.file}', '${escapeHtml(r.title)}')`}">
             <!-- 卡片顶部色条 -->
             <div class="h-1 bg-gradient-to-r ${r.color === 'accent' ? 'from-accent-500 to-pink-500' : r.color === 'emerald' ? 'from-emerald-500 to-teal-500' : 'from-primary-500 to-accent-500'}"></div>
 
